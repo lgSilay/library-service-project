@@ -1,3 +1,8 @@
 .idea
 venv
 **__pycache__
+**/migrations/*
+!**/migrations/__init__.py
+pyrightconfig.json
+.mypy.ini
+db.sqlite3
