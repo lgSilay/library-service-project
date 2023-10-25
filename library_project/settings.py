@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "debug_toolbar",
     "books_service.apps.BooksServiceConfig",
-    "debug_toolbar",
     "user",
     "borrowing_service",
     "payments_service",
@@ -40,7 +39,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -134,7 +132,6 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     )
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),

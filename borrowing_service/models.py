@@ -1,8 +1,7 @@
-import datetime
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 from books_service.models import Book
 
@@ -32,7 +31,7 @@ class Borrowing(models.Model):
             actual_return_date,
             error_to_raise
     ) -> None:
-        borrow_date = datetime.date.today()
+        borrow_date = timezone.now().date()
         if expected_return_date < borrow_date:
             raise error_to_raise(
                 {"expected_return_date":

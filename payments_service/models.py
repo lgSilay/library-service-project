@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from borrowing_service.models import Borrowing
@@ -19,19 +20,10 @@ class Payment(models.Model):
     )
     session_url = models.URLField()
     session_id = models.CharField(max_length=255)
-
-    @property
-    def money_to_pay(self) -> float:
-        return (
-            self.borrowing.book.daily_fee
-            * (
-                self.borrowing.expected_return_date
-                - self.borrowing.borrow_date
-            ).days
-        )
+    money_to_pay = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         ordering = ("status",)
 
     def __str__(self) -> str:
-        return f"{self.type} ({self.status})" 
+        return f"{self.type} ({self.status})"
