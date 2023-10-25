@@ -35,7 +35,7 @@ class Borrowing(models.Model):
             raise error_to_raise(
                 "Expected return date must be later than Borrow date"
             )
-        if actual_return_date < borrow_date:
+        if actual_return_date and actual_return_date < borrow_date:
             raise error_to_raise(
                 "Actual return date must be later than Borrow date"
             )
