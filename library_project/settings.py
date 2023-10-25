@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_extensions",
     "books_service.apps.BooksServiceConfig",
+    "user",
 ]
 
 MIDDLEWARE = [
