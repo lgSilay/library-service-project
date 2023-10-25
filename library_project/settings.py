@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "books_service.apps.BooksServiceConfig",
     "user",
+    "borrowing_service",
 ]
 
 MIDDLEWARE = [
