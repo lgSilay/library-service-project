@@ -7,7 +7,7 @@ from rest_framework.settings import api_settings
 from user.serializers import UserSerializer, AuthTokenSerializer
 
 
-class UserView(generics.CreateAPIView):
+class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
@@ -18,8 +18,8 @@ class CreateTokenView(ObtainAuthToken):
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return self.request.user
