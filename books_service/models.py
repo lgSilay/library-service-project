@@ -13,10 +13,6 @@ class Author(models.Model):
     def full_name(self) -> str:
         return str(self)
 
-    @property
-    def count_books(self) -> int:
-        return Book.objects.filter(author=self).count()
-
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
@@ -39,14 +35,12 @@ class Book(models.Model):
         ordering = ["title"]
 
     @staticmethod
-    def validate_inventory_field(value: int, error_to_raise: Exception) -> None:
+    def validate_inventory_field(
+        value: int, error_to_raise: Exception
+    ) -> None:
         if value < 0:
             raise error_to_raise(
-                {
-                    "inventory": [
-                        "Inventory cannot be negative"
-                    ]
-                }
+                {"inventory": ["Inventory cannot be negative"]}
             )
 
     def clean(self):
