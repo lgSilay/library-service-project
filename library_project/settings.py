@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "debug_toolbar",
     "books_service.apps.BooksServiceConfig",
-    "debug_toolbar",
     "user",
     "borrowing_service",
     "payments_service",
