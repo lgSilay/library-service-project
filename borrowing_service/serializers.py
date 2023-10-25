@@ -18,7 +18,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 
 class BorrowingListSerializer(BorrowingSerializer):
-    book = serializers.StringRelatedField(slug_field="title", many=False, read_only=True)
+    book = serializers.SlugRelatedField(slug_field="title", many=False, read_only=True)
 
 
 class BorrowingDetailSerializer(BorrowingSerializer):
