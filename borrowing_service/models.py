@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
@@ -27,33 +29,35 @@ class Borrowing(models.Model):
     @staticmethod
     def validate_date(
             expected_return_date,
-            borrow_date,
             actual_return_date,
             error_to_raise
     ) -> None:
+        borrow_date = datetime.date.today()
         if expected_return_date < borrow_date:
             raise error_to_raise(
-                "Expected return date must be later than Borrow date"
+                {"expected_return_date":
+                     "Expected return date must be later than Borrow date"
+                 }
             )
-        if actual_return_date < borrow_date:
+        if actual_return_date and actual_return_date < borrow_date:
             raise error_to_raise(
-                "Actual return date must be later than Borrow date"
+                {"actual_return_date": "Actual return date must be later than Borrow date"
+                 }
             )
 
     def clean(self) -> None:
         Borrowing.validate_date(
             self.expected_return_date,
-            self.borrow_date,
             self.actual_return_date,
             ValidationError
         )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None
     ):
         self.full_clean()
         return super(Borrowing, self).save(

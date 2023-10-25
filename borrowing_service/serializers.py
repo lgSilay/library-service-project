@@ -4,8 +4,7 @@ from books_service.serializers import BookDetailSerializer
 from .models import Borrowing
 
 
-class BorrowingDetailSerializer(serializers.ModelSerializer):
-    book = BookDetailSerializer(many=False, read_only=True)
+class BorrowingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
@@ -16,3 +15,11 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book"
         )
+
+
+class BorrowingListSerializer(BorrowingSerializer):
+    book = serializers.SlugRelatedField(slug_field="title", many=False, read_only=True)
+
+
+class BorrowingDetailSerializer(BorrowingSerializer):
+    book = BookDetailSerializer(many=False, read_only=True)
