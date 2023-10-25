@@ -1,4 +1,5 @@
 from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Borrowing
 from .serializers import BorrowingSerializer, BorrowingListSerializer, BorrowingDetailSerializer
@@ -14,6 +15,7 @@ class BorrowingViewSet(
         "book", "user"
     )
     serializer_class = BorrowingSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
 
