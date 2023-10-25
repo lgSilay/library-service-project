@@ -6,4 +6,3 @@ venv
 pyrightconfig.json
 .mypy.ini
 db.sqlite3
-tgbot/config.py
