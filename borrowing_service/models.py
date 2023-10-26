@@ -1,7 +1,13 @@
+import asyncio
+
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
+from tgbot.routers.notify_router import send_notification
 
 from books_service.models import Book
 
@@ -75,3 +81,18 @@ class Borrowing(models.Model):
 
     def __str__(self) -> str:
         return f"{self.book.title} borrowed by {self.user.email}"
+
+
+@receiver(post_save, sender=Borrowing)
+def notify_telegram(sender, instance, created, **kwargs):
+    if created:
+        stuff = (
+            get_user_model()
+            .objects.filter(is_staff=1, telegram_id__isnull=False)
+            .distinct()
+            .values_list("telegram_id", flat=True)
+        )
+        stuff = list(stuff)
+        info = str(instance)
+        asyncio.run(send_notification(stuff, info))
+        # TODO Celery task instead of asyncio
