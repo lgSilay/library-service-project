@@ -1,8 +1,8 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Borrowing
-from .serializers import (
+from borrowing_service.models import Borrowing
+from borrowing_service.serializers.common import (
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
@@ -16,7 +16,9 @@ class BorrowingViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = Borrowing.objects.select_related("book", "user")
+    queryset = Borrowing.objects.select_related("book").prefetch_related(
+        "payments"
+    )
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 

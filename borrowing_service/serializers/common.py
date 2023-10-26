@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
+from books_service.models import Book
 
 from books_service.serializers import BookDetailSerializer
-from .models import Borrowing
+from payments_service.serializers.nested import PaymentBorrowingSerializer
+from borrowing_service.models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -18,17 +20,45 @@ class BorrowingSerializer(serializers.ModelSerializer):
         )
 
 
-class BorrowingListSerializer(BorrowingSerializer):
+class BorrowingListSerializer(serializers.ModelSerializer):
     book = serializers.SlugRelatedField(
         slug_field="title", many=False, read_only=True
     )
+    payments = PaymentBorrowingSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "payments",
+        )
 
 
-class BorrowingDetailSerializer(BorrowingSerializer):
+class BorrowingDetailSerializer(serializers.ModelSerializer):
     book = BookDetailSerializer(many=False, read_only=True)
+    payments = PaymentBorrowingSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "payments",
+        )
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
+    book = serializers.PrimaryKeyRelatedField(
+        queryset=Book.objects.select_related("author")
+    )
+
     class Meta:
         model = Borrowing
         fields = ("id", "book", "borrow_date", "expected_return_date")
