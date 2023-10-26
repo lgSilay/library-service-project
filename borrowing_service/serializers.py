@@ -7,7 +7,6 @@ from .models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Borrowing
         fields = (
@@ -15,12 +14,14 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
-            "book"
+            "book",
         )
 
 
 class BorrowingListSerializer(BorrowingSerializer):
-    book = serializers.SlugRelatedField(slug_field="title", many=False, read_only=True)
+    book = serializers.SlugRelatedField(
+        slug_field="title", many=False, read_only=True
+    )
 
 
 class BorrowingDetailSerializer(BorrowingSerializer):
@@ -30,18 +31,15 @@ class BorrowingDetailSerializer(BorrowingSerializer):
 class BorrowingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
-        fields = (
-            "id",
-            "book",
-            "borrow_date",
-            "expected_return_date"
-        )
+        fields = ("id", "book", "borrow_date", "expected_return_date")
         read_only_fields = ("id", "borrow_date")
 
     def validate(self, attrs):
         book = attrs.get("book")
         if book.inventory < 1:
-            raise serializers.ValidationError(f"Book '{book.title}' is out of stock")
+            raise serializers.ValidationError(
+                f"Book '{book.title}' is out of stock"
+            )
 
         expected_return_date = attrs.get("expected_return_date")
         actual_return_date = attrs.get("actual_return_date")

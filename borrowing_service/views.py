@@ -6,7 +6,7 @@ from .serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
-    BorrowingCreateSerializer
+    BorrowingCreateSerializer,
 )
 
 
@@ -14,16 +14,13 @@ class BorrowingViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
-    queryset = Borrowing.objects.select_related(
-        "book", "user"
-    )
+    queryset = Borrowing.objects.select_related("book", "user")
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
-
         if self.action == "list":
             return BorrowingListSerializer
 
@@ -34,7 +31,6 @@ class BorrowingViewSet(
             return BorrowingCreateSerializer
 
         return self.serializer_class
-
 
     @staticmethod
     def _params_to_ints(params):
