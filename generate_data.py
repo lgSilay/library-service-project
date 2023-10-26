@@ -86,7 +86,7 @@ def generate_borowing(count: int = BORROWINGS_COUNT) -> None:
                 "fields": {
                     "borrow_date": str(borrow_date),
                     "expected_return_date": str(expected_return_date),
-                    "actual_return_date": str(actual_return_date),
+                    "actual_return_date": random.choice((None, str(actual_return_date))),
                     "book": random.randint(1, BOOKS_COUNT),
                     "user": random.randint(1, USERS_COUNT),
                 },
