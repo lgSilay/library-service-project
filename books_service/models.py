@@ -1,10 +1,30 @@
+import os
+import uuid
+from django.utils.text import slugify
+from typing import Union
+
 from django.db import models
 from django.core.exceptions import ValidationError
+
+
+def image_file_path(instance: Union["Book", "Author"], filename: str) -> str:
+    _, extension = os.path.splitext(filename)
+    filename = ""
+    if isinstance(instance, Book):
+        filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
+    if isinstance(instance, Author):
+        filename = f"{slugify(instance.full_name)}-{uuid.uuid4()}{extension}"
+    return os.path.join("uploads/crew/", filename)
 
 
 class Author(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    author_profile_image = models.ImageField(
+        upload_to=image_file_path,
+        null=True,
+        default=None,
+    )
 
     class Meta:
         ordering = ["last_name", "first_name"]
@@ -23,6 +43,11 @@ class Book(models.Model):
         ("soft", "Soft"),
     )
     title = models.CharField(max_length=255)
+    title_image = models.ImageField(
+        upload_to=image_file_path,
+        null=True,
+        default=None,
+    )
     author = models.ForeignKey(
         Author, on_delete=models.CASCADE, related_name="books"
     )
