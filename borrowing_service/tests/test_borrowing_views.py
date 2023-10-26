@@ -119,7 +119,7 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         url = reverse(
             "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
         )
-        res = self.client.patch(url)
+        res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         borrowing.refresh_from_db()
         self.assertIsNotNone(borrowing.actual_return_date)
@@ -131,5 +131,5 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         url = reverse(
             "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
         )
-        res = self.client.patch(url)
+        res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
