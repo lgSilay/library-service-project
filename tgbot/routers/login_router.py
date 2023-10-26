@@ -32,17 +32,16 @@ async def command_login(message: Message, state: FSMContext) -> None:
 async def process_name(message: Message, state: FSMContext) -> None:
     await state.update_data(email=message.text)
     await state.set_state(Form.password)
-    await message.answer(
-        f"Enter your password:"
-    )
+    await message.answer("Enter your password:")
 
 
 # noinspection PyUnresolvedReferences
 @router.message(Form.password)
 async def process_password(message: Message, state: FSMContext) -> None:
     data = await state.update_data(password=message.text)
-    await bot.delete_message(chat_id=message.chat.id,
-                             message_id=message.message_id)
+    await bot.delete_message(
+        chat_id=message.chat.id, message_id=message.message_id
+    )
     await state.clear()
     await perform_login(message=message, data=data)
 
@@ -50,7 +49,7 @@ async def process_password(message: Message, state: FSMContext) -> None:
 async def perform_login(message: Message, data: Dict[str, Any]) -> None:
     if message.chat.type != ChatType.PRIVATE:
         await message.answer(
-            f"Login is available only in private conversion with bot."
+            "Login is available only in private conversion with bot."
         )
         return
     email = data["email"]
@@ -78,20 +77,17 @@ async def connect_to_user(message: Message, token: str):
     headers = {
         "Authorization": f"Bearer {token}",
     }
-    data_to_patch = {
-        "telegram_id": telegram_id
-    }
+    data_to_patch = {"telegram_id": telegram_id}
     async with aiohttp.ClientSession() as session:
-        async with session.patch(REQUEST_URL, json=data_to_patch,
-                                 headers=headers) as response:
+        async with session.patch(
+            REQUEST_URL, json=data_to_patch, headers=headers
+        ) as response:
             if response.status == 200:
                 await message.answer(
-                    f"Success! Now your account attached to this profile."
+                    "Success! Now your account attached to this profile."
                 )
             else:
-                await message.answer(
-                    f"Error occurred. {response.status}"
-                )
+                await message.answer(f"Error occurred. {response.status}")
 
 
 def initialize(bot_instance):
