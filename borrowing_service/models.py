@@ -95,4 +95,3 @@ def notify_telegram(sender, instance, created, **kwargs):
         stuff = list(stuff)
         info = str(instance)
         asyncio.run(send_notification(stuff, info))
-        # TODO Celery task instead of asyncio
