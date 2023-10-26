@@ -57,7 +57,6 @@ class BookViewSet(CommonLogicMixin, viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
     def get_serializer_class(self):
-
         if self.action == "list":
             return BookListSerializer
 
@@ -83,7 +82,7 @@ class BookViewSet(CommonLogicMixin, viewsets.ModelViewSet):
             OpenApiParameter(
                 "title",
                 type={"type": "str"},
-                description="Filter by title fragment (ex. ?title=harry)"
+                description="Filter by title fragment (ex. ?title=harry)",
             )
         ]
     )
