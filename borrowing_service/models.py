@@ -11,14 +11,12 @@ class Borrowing(models.Model):
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
     book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        related_name="borrowings"
+        Book, on_delete=models.CASCADE, related_name="borrowings"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="borrowings"
+        related_name="borrowings",
     )
 
     @property
@@ -27,36 +25,33 @@ class Borrowing(models.Model):
 
     @staticmethod
     def validate_date(
-            expected_return_date,
-            actual_return_date,
-            error_to_raise
+        expected_return_date, actual_return_date, error_to_raise
     ) -> None:
         borrow_date = timezone.now().date()
         if expected_return_date < borrow_date:
             raise error_to_raise(
-                {"expected_return_date":
-                     "Expected return date must be later than Borrow date"
-                 }
+                {
+                    "expected_return_date": "Expected return date must be later than Borrow date"
+                }
             )
         if actual_return_date and actual_return_date < borrow_date:
             raise error_to_raise(
-                {"actual_return_date": "Actual return date must be later than Borrow date"
-                 }
+                {
+                    "actual_return_date": "Actual return date must be later than Borrow date"
+                }
             )
 
     def clean(self) -> None:
         Borrowing.validate_date(
-            self.expected_return_date,
-            self.actual_return_date,
-            ValidationError
+            self.expected_return_date, self.actual_return_date, ValidationError
         )
 
     def save(
-            self,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
     ):
         self.full_clean()
         return super(Borrowing, self).save(
