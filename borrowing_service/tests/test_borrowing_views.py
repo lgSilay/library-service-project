@@ -6,7 +6,7 @@ from rest_framework import status
 
 from books_service.models import Book, Author
 from borrowing_service.models import Borrowing
-from borrowing_service.serializers import (
+from borrowing_service.serializers.common import (
     BorrowingListSerializer,
     BorrowingDetailSerializer,
 )
@@ -56,14 +56,12 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
     def test_list_borrowings(self) -> None:
         borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
         borrowing2 = sample_borrowing(self.user, self.book, "2023-11-15")
-
         res = self.client.get(BORROWING_URL)
-
         borrowings = Borrowing.objects.all()
         serializer = BorrowingListSerializer(borrowings, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data["results"], serializer.data)
 
     def test_filter_borrowings_by_user_id(self) -> None:
         borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
@@ -77,7 +75,7 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         res = self.client.get(BORROWING_URL, {"user_id": f"{self.user.id}"})
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(len(res.data["results"]), 2)
 
     def test_filter_borrowings_by_is_active(self) -> None:
         borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
@@ -89,7 +87,7 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         res = self.client.get(BORROWING_URL, {"is_active": "true"})
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(len(res.data["results"]), 2)
 
     def test_retrieve_borrowing_detail(self) -> None:
         borrowing = sample_borrowing(self.user, self.book, "2023-10-30")
@@ -106,11 +104,32 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_create_borrowing(self) -> None:
+    def test_create_borrowing_out_of_stock(self) -> None:
+        self.book.inventory = 0
+        self.book.save()
         payload = {
             "book": self.book.id,
             "expected_return_date": "2023-11-01",
         }
         res = self.client.post(BORROWING_URL, payload, format="json")
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+    def test_return_borrowing(self) -> None:
+        borrowing = sample_borrowing(self.user, self.book, "2023-10-30")
+        url = reverse(
+            "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
+        )
+        res = self.client.patch(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        borrowing.refresh_from_db()
+        self.assertIsNotNone(borrowing.actual_return_date)
+
+    def test_return_borrowing_already_returned(self) -> None:
+        borrowing = sample_borrowing(
+            self.user, self.book, "2023-10-30", "2023-10-31"
+        )
+        url = reverse(
+            "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
+        )
+        res = self.client.patch(url)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

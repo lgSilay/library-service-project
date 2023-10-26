@@ -5,11 +5,13 @@ from rest_framework.test import APIRequestFactory
 
 from books_service.models import Book, Author
 from borrowing_service.models import Borrowing
-from borrowing_service.serializers import (
+from borrowing_service.serializers.common import (
     BorrowingCreateSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
+    BorrowingReturnSerializer,
 )
+from borrowing_service.serializers.nested import BorrowingPaymentSerializer
 
 
 class BorrowingSerializerTest(TestCase):
@@ -40,6 +42,7 @@ class BorrowingSerializerTest(TestCase):
         )
 
     def test_borrowing_create_serializer_valid(self) -> None:
+        inventory = self.book.inventory
         data = {
             "book": self.book.id,
             "borrow_date": timezone.now().date(),
@@ -92,6 +95,10 @@ class BorrowingSerializerTest(TestCase):
             data["actual_return_date"], self.borrowing.actual_return_date
         )
         self.assertEqual(data["book"], self.borrowing.book.title)
+        self.assertIsInstance(data["payments"], list)
+        self.assertEqual(
+            len(data["payments"]), self.borrowing.payments.count()
+        )
 
     def test_borrowing_detail_serializer(self) -> None:
         request = APIRequestFactory().get("/borrowing/")
@@ -108,3 +115,48 @@ class BorrowingSerializerTest(TestCase):
             data["actual_return_date"], self.borrowing.actual_return_date
         )
         self.assertEqual(data["book"]["id"], self.borrowing.book.id)
+        self.assertIsInstance(data["payments"], list)
+        self.assertEqual(
+            len(data["payments"]), self.borrowing.payments.count()
+        )
+
+    def test_valid_borrowing_return(self) -> None:
+        inventory = self.book.inventory
+        self.assertIsNone(self.borrowing.actual_return_date)
+        serializer = BorrowingReturnSerializer(
+            instance=self.borrowing,
+            data={"actual_return_date": timezone.now().date()},
+        )
+        self.assertTrue(serializer.is_valid())
+        serializer.save()
+        self.borrowing.refresh_from_db()
+        self.assertIsNotNone(self.borrowing.actual_return_date)
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.inventory, inventory + 1)
+
+    def test_already_returned_borrowing(self) -> None:
+        self.borrowing.actual_return_date = timezone.now().date()
+        self.borrowing.save()
+        serializer = BorrowingReturnSerializer(
+            instance=self.borrowing,
+            data={"actual_return_date": timezone.now().date()},
+        )
+        self.assertFalse(serializer.is_valid())
+        self.assertIn(
+            "This borrowing has already been returned.",
+            serializer.errors["non_field_errors"],
+        )
+
+    def test_borrowing_payment_serializer(self) -> None:
+        serializer = BorrowingPaymentSerializer(self.borrowing)
+        data = serializer.data
+        self.assertEqual(data["id"], self.borrowing.id)
+        self.assertEqual(data["borrow_date"], str(self.borrowing.borrow_date))
+        self.assertEqual(
+            data["expected_return_date"],
+            str(self.borrowing.expected_return_date),
+        )
+        self.assertEqual(
+            data["actual_return_date"], self.borrowing.actual_return_date
+        )
+        self.assertEqual(data["book"], self.borrowing.book.id)
