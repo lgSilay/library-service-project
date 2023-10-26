@@ -1,13 +1,18 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import status
 
 from borrowing_service.models import Borrowing
 from borrowing_service.serializers.common import (
+    BorrowingCreateSerializer,
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
-    BorrowingCreateSerializer,
 )
+from payments_service.utils import create_stripe_session
 
 
 class BorrowingViewSet(
@@ -57,5 +62,15 @@ class BorrowingViewSet(
 
         return queryset
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        borrowing = serializer.save(user=request.user)
+        money_to_pay = (
+            borrowing.expected_return_date - borrowing.borrow_date
+        ).days * borrowing.book.daily_fee
+        session_url = create_stripe_session(borrowing, money_to_pay)
+        return Response(
+            {"session_url": session_url},
+            status=status.HTTP_307_TEMPORARY_REDIRECT,
+        )

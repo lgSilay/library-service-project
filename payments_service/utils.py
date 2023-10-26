@@ -19,7 +19,7 @@ def create_stripe_session(
                     "product_data": {
                         "name": borrowing.book.title,
                     },
-                    "unit_amount": money_to_pay * 100,
+                    "unit_amount": int(money_to_pay * 100),
                 },
                 "quantity": 1,
             }
