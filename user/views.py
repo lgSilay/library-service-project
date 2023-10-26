@@ -28,3 +28,14 @@ class TelegramUserView(
 
     def get_object(self):
         return self.request.user
+
+
+class TelegramUserView(
+    mixins.UpdateModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+):
+    queryset = get_user_model().objects.all()
+    serializer_class = TelegramUserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user

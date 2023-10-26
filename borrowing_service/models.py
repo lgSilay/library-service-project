@@ -31,19 +31,14 @@ class Borrowing(models.Model):
 
     @staticmethod
     def validate_date(
-        expected_return_date,
-        actual_return_date,
-        error_to_raise,
-        borrow_date=None
+        expected_return_date, actual_return_date, error_to_raise
     ) -> None:
-        if not borrow_date:
-            borrow_date = timezone.now().date()
+        borrow_date = timezone.now().date()
         if expected_return_date < borrow_date:
             raise error_to_raise(
                 {
                     "expected_return_date": (
-                        "Expected return date "
-                        "must be later than Borrow date"
+                        "Expected return date must be later than Borrow date"
                     )
                 }
             )
@@ -58,10 +53,7 @@ class Borrowing(models.Model):
 
     def clean(self) -> None:
         Borrowing.validate_date(
-            self.expected_return_date,
-            self.actual_return_date,
-            ValidationError,
-            self.borrow_date
+            self.expected_return_date, self.actual_return_date, ValidationError
         )
 
     def save(
