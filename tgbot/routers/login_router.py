@@ -60,7 +60,6 @@ async def perform_login(message: Message, data: Dict[str, Any]) -> None:
             "password": password,
         }
         async with session.post(LOGIN_URL, json=login_data) as response:
-            print(response.status)
             if response.status == 200:
                 data = await response.json()
                 token = data["access"]
@@ -73,7 +72,7 @@ async def perform_login(message: Message, data: Dict[str, Any]) -> None:
 
 
 async def connect_to_user(message: Message, token: str):
-    telegram_id = message.from_user.id
+    telegram_id = message.chat.id
     headers = {
         "Authorization": f"Bearer {token}",
     }
