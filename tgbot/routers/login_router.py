@@ -1,4 +1,3 @@
-import json
 from typing import Any, Dict
 import aiohttp
 from aiogram import Router
@@ -10,10 +9,10 @@ from aiogram.types import Message
 from aiogram.fsm.state import State, StatesGroup
 
 from tgbot.config import LOGIN_URL, REQUEST_URL
+from tgbot.bot_singleton import BotSingleton
 
 router = Router()
-
-bot = None
+bot = BotSingleton()
 
 
 class Form(StatesGroup):
