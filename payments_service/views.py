@@ -2,7 +2,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 
 from payments_service.models import Payment
-from payments_service.serializers import (
+from payments_service.serializers.common import (
     PaymentListSerializer,
     PaymentDetailSerializer,
 )

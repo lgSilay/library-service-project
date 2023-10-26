@@ -1,13 +1,22 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("__debug__/", include("debug_toolbar.urls")),
-    path("api/borrowing_service/", include("borrowing_service.urls", namespace="borrowing_service")),
+    path(
+        "api/borrowing_service/",
+        include("borrowing_service.urls", namespace="borrowing_service"),
+    ),
     path("api/books/", include("books_service.urls")),
     path("api/user/", include("user.urls", namespace="user")),
     path(
         "api/payments/", include("payments_service.urls", namespace="payments")
     ),
-]
+] + (
+    [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]
+    if settings.DEBUG
+    else []
+)

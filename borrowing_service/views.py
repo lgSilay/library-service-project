@@ -1,8 +1,8 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Borrowing
-from .serializers import (
+from borrowing_service.models import Borrowing
+from borrowing_service.serializers.common import (
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
