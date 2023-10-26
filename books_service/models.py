@@ -23,6 +23,7 @@ class Author(models.Model):
     author_profile_image = models.ImageField(
         upload_to=image_file_path,
         null=True,
+        blank=True,
         default=None,
     )
 
@@ -46,6 +47,7 @@ class Book(models.Model):
     title_image = models.ImageField(
         upload_to=image_file_path,
         null=True,
+        blank=True,
         default=None,
     )
     author = models.ForeignKey(
