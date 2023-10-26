@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import status
 
 from borrowing_service.models import Borrowing
@@ -79,7 +80,7 @@ class BorrowingViewSet(
         )
 
     @action(
-        methods=["PATCH"],
+        methods=["GET"],
         detail=True,
         url_path="return_borrowing",
         permission_classes=[IsAuthenticated],
