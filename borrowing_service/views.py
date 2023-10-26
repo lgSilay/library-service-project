@@ -1,16 +1,16 @@
+from django.utils import timezone
 from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.views import status
 
 from borrowing_service.models import Borrowing
 from borrowing_service.serializers.common import (
-    BorrowingCreateSerializer,
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingDetailSerializer,
+    BorrowingCreateSerializer,
+    BorrowingReturnSerializer,
 )
 from payments_service.utils import create_stripe_session
 
@@ -36,6 +36,9 @@ class BorrowingViewSet(
 
         if self.action == "create":
             return BorrowingCreateSerializer
+
+        if self.action == "return_borrowing":
+            return BorrowingReturnSerializer
 
         return self.serializer_class
 
@@ -74,3 +77,20 @@ class BorrowingViewSet(
             {"session_url": session_url},
             status=status.HTTP_307_TEMPORARY_REDIRECT,
         )
+
+    @action(
+        methods=["PATCH"],
+        detail=True,
+        url_path="return_borrowing",
+        permission_classes=[IsAuthenticated],
+    )
+    def return_borrowing(self, request, pk=None):
+        borrowing = self.get_object()
+        actual_date_today = {"actual_return_date": timezone.now().date()}
+        serializer = self.get_serializer(borrowing, data=actual_date_today)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
