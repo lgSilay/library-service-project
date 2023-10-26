@@ -6,11 +6,13 @@ from payments_service.serializers.common import (
     PaymentListSerializer,
     PaymentDetailSerializer,
 )
+from .permissions import IsOwnerOrAdminReadOnly
 
 
 class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Payment.objects.select_related("borrowing__book")
     serializer_class = PaymentDetailSerializer
+    permission_classes = (IsOwnerOrAdminReadOnly, )
 
     def get_queryset(self):
         queryset = self.queryset
