@@ -14,7 +14,7 @@ def image_file_path(instance: Union["Book", "Author"], filename: str) -> str:
         filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
     if isinstance(instance, Author):
         filename = f"{slugify(instance.full_name)}-{uuid.uuid4()}{extension}"
-    return os.path.join("uploads/crew/", filename)
+    return os.path.join("uploads/books_service/", filename)
 
 
 class Author(models.Model):
