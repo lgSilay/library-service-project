@@ -69,7 +69,7 @@ class BorrowingViewSet(
         money_to_pay = (
             borrowing.expected_return_date - borrowing.borrow_date
         ).days * borrowing.book.daily_fee
-        session_url = create_stripe_session(borrowing, money_to_pay)
+        session_url = create_stripe_session(request, borrowing, money_to_pay)
         return Response(
             {"session_url": session_url},
             status=status.HTTP_307_TEMPORARY_REDIRECT,
