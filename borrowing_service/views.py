@@ -86,6 +86,7 @@ class BorrowingViewSet(
         permission_classes=[IsAuthenticated],
     )
     def return_borrowing(self, request, pk=None):
+        """Endpoint to return borrowing"""
         borrowing = self.get_object()
         actual_date_today = {"actual_return_date": timezone.now().date()}
         serializer = self.get_serializer(borrowing, data=actual_date_today)
