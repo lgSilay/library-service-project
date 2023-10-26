@@ -102,7 +102,8 @@ class BorrowingViewSet(
             OpenApiParameter(
                 "is_active",
                 type={"type": "str"},
-                description="Filter to see the unreturned borrowing (ex. ?is_active)"
+                description="Filter to see the "
+                            "unreturned borrowing (ex. ?is_active)"
             ),
             OpenApiParameter(
                 "user_id",
