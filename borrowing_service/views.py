@@ -1,4 +1,5 @@
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -60,8 +61,7 @@ class BorrowingViewSet(
         else:
             queryset = queryset.filter(user=user)
 
-        is_active = self.request.query_params.get("is_active")
-        if is_active:
+        if "is_active" in self.request.query_params:
             queryset = queryset.filter(actual_return_date__isnull=True)
 
         return queryset
@@ -95,3 +95,20 @@ class BorrowingViewSet(
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "is_active",
+                type={"type": "str"},
+                description="Filter to see the unreturned borrowing (ex. ?is_active)"
+            ),
+            OpenApiParameter(
+                "user_id",
+                type={"type": "list", "items": {"type": "number"}},
+                description="Only for staff: filter by user (ex. ?user_id=1,2)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
