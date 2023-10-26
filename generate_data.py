@@ -3,7 +3,7 @@ NOTICE:
 - if you want change amount of data – change the COUNT constant
 - the DB will be deleted, created and loaded automatically if you run script
 - into your PyCharm or environment  set the env. variable DJANGO_SETTINGS_MODULE=library_project.settings
-befor running this scriprt. Exmpl: export DJANGO_SETTINGS_MODULE=library_project.settings for terminal
+before running this script. Example: export DJANGO_SETTINGS_MODULE=library_project.settings for terminal
 on MAC OS. Search command for Windows if needed.
 """
 import json
@@ -86,7 +86,9 @@ def generate_borowing(count: int = BORROWINGS_COUNT) -> None:
                 "fields": {
                     "borrow_date": str(borrow_date),
                     "expected_return_date": str(expected_return_date),
-                    "actual_return_date": random.choice((None, str(actual_return_date))),
+                    "actual_return_date": random.choice(
+                        (None, str(actual_return_date))
+                    ),
                     "book": random.randint(1, BOOKS_COUNT),
                     "user": random.randint(1, USERS_COUNT),
                 },

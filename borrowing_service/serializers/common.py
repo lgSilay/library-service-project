@@ -97,7 +97,9 @@ class BorrowingReturnSerializer(BorrowingSerializer):
     def validate(self, attrs):
 
         if self.instance.actual_return_date:
-            raise serializers.ValidationError("This borrowing has already been returned.")
+            raise serializers.ValidationError(
+                "This borrowing has already been returned."
+            )
 
         return attrs
 

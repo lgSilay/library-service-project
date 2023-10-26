@@ -28,7 +28,7 @@ async def process_name(message: Message, state: FSMContext) -> None:
     await state.update_data(username=message.text)
     await state.set_state(Form.password)
     await message.answer(
-        f"Enter your password:"
+        "Enter your password:"
     )
 
 

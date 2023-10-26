@@ -1,5 +1,5 @@
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from django.db.models import Count
 
 from .models import Author, Book
@@ -29,8 +29,32 @@ class BookViewSet(BasePermission, viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
     def get_serializer_class(self):
+
         if self.action == "list":
             return BookListSerializer
+
         if self.action == "retrieve":
             return BookDetailSerializer
+
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        title = self.request.query_params.get("title")
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "title",
+                type={"type": "str"},
+                description="Filter by title fragment (ex. ?title=harry)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
