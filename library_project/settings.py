@@ -142,6 +142,7 @@ SPECTACULAR_SETTINGS = {
         "defaultModelRendering": "model",
         "defaultModelsExpandDepth": 2,
         "defaultModelExpandDepth": 2,
+    }
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
