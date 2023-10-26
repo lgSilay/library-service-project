@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from rest_framework import serializers
 
 from books_service.serializers import BookDetailSerializer
@@ -52,8 +53,9 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        book = validated_data.get("book")
-        borrowing = Borrowing.objects.create(**validated_data)
-        book.inventory -= 1
-        book.save()
-        return borrowing
+        with transaction.atomic():
+            book = validated_data.get("book")
+            borrowing = Borrowing.objects.create(**validated_data)
+            book.inventory -= 1
+            book.save()
+            return borrowing
