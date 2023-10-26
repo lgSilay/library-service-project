@@ -44,9 +44,9 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         expected_return_date = attrs.get("expected_return_date")
         actual_return_date = attrs.get("actual_return_date")
         Borrowing.validate_date(
-            expected_return_date,
-            actual_return_date,
-            ValidationError,
+            expected_return_date=expected_return_date,
+            actual_return_date=actual_return_date,
+            error_to_raise=ValidationError,
         )
         return attrs
 
@@ -57,3 +57,24 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             book.inventory -= 1
             book.save()
             return borrowing
+
+
+class BorrowingReturnSerializer(BorrowingSerializer):
+    class Meta:
+        model = Borrowing
+        fields = ("id", "actual_return_date")
+
+    def validate(self, attrs):
+
+        if self.instance.actual_return_date:
+            raise serializers.ValidationError("This borrowing has already been returned.")
+
+        return attrs
+
+    def save(self, **kwargs):
+        with transaction.atomic():
+            book = self.instance.book
+            book.inventory += 1
+            book.save()
+
+            return super().save(**kwargs)
