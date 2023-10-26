@@ -8,9 +8,14 @@ from .serializers import (
     BookListSerializer,
     AuthorSerializer,
 )
+from .permissions import IsAdminOrReadOnly
 
 
-class AuthorViewSet(viewsets.ModelViewSet):
+class BasePermission:
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
@@ -18,7 +23,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
         return Author.objects.annotate(books_count=Count("books"))
 
 
-class BookViewSet(viewsets.ModelViewSet):
+class BookViewSet(BasePermission, viewsets.ModelViewSet):
     queryset = Book.objects.select_related("author").all()
     serializer_class = BookSerializer
 
