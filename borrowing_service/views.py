@@ -2,7 +2,12 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Borrowing
-from .serializers import BorrowingSerializer, BorrowingListSerializer, BorrowingDetailSerializer
+from .serializers import (
+    BorrowingSerializer,
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+    BorrowingCreateSerializer
+)
 
 
 class BorrowingViewSet(
@@ -19,13 +24,17 @@ class BorrowingViewSet(
 
     def get_serializer_class(self):
 
-        if self.action == "get":
+        if self.action == "list":
             return BorrowingListSerializer
 
         if self.action == "retrieve":
             return BorrowingDetailSerializer
 
+        if self.action == "create":
+            return BorrowingCreateSerializer
+
         return self.serializer_class
+
 
     @staticmethod
     def _params_to_ints(params):
@@ -49,3 +58,6 @@ class BorrowingViewSet(
             queryset = queryset.filter(actual_return_date__isnull=True)
 
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
