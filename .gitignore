@@ -6,3 +6,4 @@ venv
 pyrightconfig.json
 .mypy.ini
 db.sqlite3
+.env
