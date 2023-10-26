@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
+from books_service.models import Book
 
 from books_service.serializers import BookDetailSerializer
 from payments_service.serializers.nested import PaymentBorrowingSerializer
@@ -54,6 +55,10 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
+    book = serializers.PrimaryKeyRelatedField(
+        queryset=Book.objects.select_related("author")
+    )
+
     class Meta:
         model = Borrowing
         fields = ("id", "book", "borrow_date", "expected_return_date")

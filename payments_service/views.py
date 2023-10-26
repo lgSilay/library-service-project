@@ -9,7 +9,7 @@ from payments_service.serializers.common import (
 
 
 class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    queryset = Payment.objects.all()
+    queryset = Payment.objects.select_related("borrowing__book")
     serializer_class = PaymentDetailSerializer
 
     def get_queryset(self):
