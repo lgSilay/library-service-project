@@ -1,3 +1,4 @@
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from django.db.models import Count
 
@@ -45,3 +46,15 @@ class BookViewSet(BasePermission, viewsets.ModelViewSet):
             queryset = queryset.filter(title__icontains=title)
 
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "title",
+                type={"type": "str"},
+                description="Filter by title fragment (ex. ?title=harry)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
