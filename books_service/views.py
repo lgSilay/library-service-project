@@ -12,18 +12,11 @@ from .serializers import (
 from .permissions import IsAdminOrReadOnly
 
 
-class DefaultPagination(PageNumberPagination):
-    page_size = 25
-    page_size_query_param = "page_size"
-    max_page_size = 1000
-
-
-class BasePermissionPagination:
+class BasePermission:
     permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = DefaultPagination
 
 
-class AuthorViewSet(BasePermissionPagination, viewsets.ModelViewSet):
+class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
@@ -31,7 +24,7 @@ class AuthorViewSet(BasePermissionPagination, viewsets.ModelViewSet):
         return Author.objects.annotate(books_count=Count("books"))
 
 
-class BookViewSet(BasePermissionPagination, viewsets.ModelViewSet):
+class BookViewSet(BasePermission, viewsets.ModelViewSet):
     queryset = Book.objects.select_related("author").all()
     serializer_class = BookSerializer
 
