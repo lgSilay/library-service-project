@@ -28,8 +28,20 @@ class BookViewSet(BasePermission, viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
     def get_serializer_class(self):
+
         if self.action == "list":
             return BookListSerializer
+
         if self.action == "retrieve":
             return BookDetailSerializer
+
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        title = self.request.query_params.get("title")
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        return queryset
