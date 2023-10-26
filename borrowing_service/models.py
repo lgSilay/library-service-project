@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-from tgbot.routers.notify_router import send_notification
+from tgbot.notificatior import send_notification
 
 from books_service.models import Book
 
@@ -94,4 +94,4 @@ def notify_telegram(sender, instance, created, **kwargs):
         )
         stuff = list(stuff)
         info = str(instance)
-        asyncio.run(send_notification(stuff, info))
+        send_notification(stuff, info)
