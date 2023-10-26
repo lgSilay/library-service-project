@@ -57,7 +57,7 @@ class BorrowingViewSet(
             user_id = self.request.query_params.get("user_id")
             if user_id:
                 int_user_id = self._params_to_ints(user_id)
-                queryset = queryset.filter(user_id__in=int_user_id)
+                queryset = queryset.filter(user_id__in=int_user_id).distinct()
         else:
             queryset = queryset.filter(user=user)
 
