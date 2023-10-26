@@ -1,7 +1,13 @@
+import asyncio
+
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
+from tgbot.routers.notify_router import send_notification
 
 from books_service.models import Book
 
@@ -11,14 +17,12 @@ class Borrowing(models.Model):
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
     book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        related_name="borrowings"
+        Book, on_delete=models.CASCADE, related_name="borrowings"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="borrowings"
+        related_name="borrowings",
     )
 
     @property
@@ -27,28 +31,25 @@ class Borrowing(models.Model):
 
     @staticmethod
     def validate_date(
-            expected_return_date,
-            actual_return_date,
-            error_to_raise
+            expected_return_date, actual_return_date, error_to_raise
     ) -> None:
         borrow_date = timezone.now().date()
         if expected_return_date < borrow_date:
             raise error_to_raise(
-                {"expected_return_date":
-                     "Expected return date must be later than Borrow date"
-                 }
+                {
+                    "expected_return_date": "Expected return date must be later than Borrow date"
+                }
             )
         if actual_return_date and actual_return_date < borrow_date:
             raise error_to_raise(
-                {"actual_return_date": "Actual return date must be later than Borrow date"
-                 }
+                {
+                    "actual_return_date": "Actual return date must be later than Borrow date"
+                }
             )
 
     def clean(self) -> None:
         Borrowing.validate_date(
-            self.expected_return_date,
-            self.actual_return_date,
-            ValidationError
+            self.expected_return_date, self.actual_return_date, ValidationError
         )
 
     def save(
@@ -56,7 +57,7 @@ class Borrowing(models.Model):
             force_insert=False,
             force_update=False,
             using=None,
-            update_fields=None
+            update_fields=None,
     ):
         self.full_clean()
         return super(Borrowing, self).save(
@@ -68,3 +69,18 @@ class Borrowing(models.Model):
 
     def __str__(self) -> str:
         return f"{self.book.title} borrowed by {self.user.email}"
+
+
+@receiver(post_save, sender=Borrowing)
+def notify_telegram(sender, instance, created, **kwargs):
+    if created:
+        stuff = (
+            get_user_model()
+            .objects.filter(is_staff=1, telegram_id__isnull=False)
+            .distinct()
+            .values_list("telegram_id", flat=True)
+        )
+        stuff = list(stuff)
+        info = str(instance)
+        asyncio.run(send_notification(stuff, info))
+        # TODO Celery task instead of asyncio

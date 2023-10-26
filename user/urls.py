@@ -2,17 +2,24 @@ from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
-    TokenVerifyView
+    TokenVerifyView,
 )
 
-from user.views import ManageUserView, CreateUserView
+from user.views import ManageUserView, CreateUserView, TelegramUserView
 
 urlpatterns = [
     path("register/", CreateUserView.as_view(), name="create"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("me/", ManageUserView.as_view(), name="manage")
+    path("me/", ManageUserView.as_view(), name="manage"),
+    path(
+        "telegram/",
+        TelegramUserView.as_view(
+            {"patch": "partial_update", "get": "retrieve"}
+        ),
+        name="telegram",
+    ),
 ]
 
 app_name = "user"
