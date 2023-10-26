@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import Count
 
 from .models import Author, Book
@@ -11,11 +12,18 @@ from .serializers import (
 from .permissions import IsAdminOrReadOnly
 
 
-class BasePermission:
+class DefaultPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = "page_size"
+    max_page_size = 1000
+
+
+class BasePermissionPagination:
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = DefaultPagination
 
 
-class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
+class AuthorViewSet(BasePermissionPagination, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
@@ -23,7 +31,7 @@ class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
         return Author.objects.annotate(books_count=Count("books"))
 
 
-class BookViewSet(BasePermission, viewsets.ModelViewSet):
+class BookViewSet(BasePermissionPagination, viewsets.ModelViewSet):
     queryset = Book.objects.select_related("author").all()
     serializer_class = BookSerializer
 
