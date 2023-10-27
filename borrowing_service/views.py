@@ -3,13 +3,14 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework_simplejwt.settings import settings
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import status
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from borrowing_service.models import Borrowing
+from borrowing_service.permissions import IsOwnerOrAdmin
 from borrowing_service.serializers.common import (
     BorrowingSerializer,
     BorrowingListSerializer,
@@ -21,6 +22,8 @@ from payments_service.utils import create_stripe_session
 
 
 class ReturnBorrowingView(APIView):
+    permission_classes = (IsOwnerOrAdmin,)
+
     def post(self, request: Request, pk: int) -> Response:
         borrowing = get_object_or_404(Borrowing, pk=pk)
         actual_return_date = timezone.now().date()
