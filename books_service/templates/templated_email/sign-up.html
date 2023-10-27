@@ -1,0 +1,24 @@
+{% block subject %}My subject for {% endblock %}
+{% block html %}
+  <div class="container">
+    <div class="jumbotron">
+      <h3>Hello newcomer!</h3>
+      <p>You just signed up for my website. Here are your details:</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Join Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ email }}</td>
+            <td>{{ date_joined }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Thanks, you rock!</p>
+    </div>
+  </div>
+{% endblock %}
