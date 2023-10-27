@@ -2,19 +2,20 @@ import asyncio
 import logging
 import sys
 
-from aiogram import Bot, Dispatcher
-from aiogram.enums import ParseMode
-from tgbot.routers import info_router, login_router, request_router
+from aiogram import Dispatcher
+from tgbot.routers import (
+    info_router,
+    login_router,
+)
 
-from tgbot.config import TOKEN
+from tgbot.bot_singleton import BotSingleton
 
 
 async def main() -> None:
-    bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+    bot = BotSingleton()
     dp = Dispatcher()
     dp.include_router(info_router.router)
     dp.include_router(login_router.router)
-    dp.include_router(request_router.router)
     await dp.start_polling(bot)
 
 

@@ -3,7 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 from books_service.models import Book
 
-from books_service.serializers import BookDetailSerializer
+from books_service.serializers.common import BookDetailSerializer
 from payments_service.serializers.nested import PaymentBorrowingSerializer
 from borrowing_service.models import Borrowing
 

@@ -41,6 +41,7 @@ def generate_authors(count: int = AUTHORS_COUNT) -> None:
                 "fields": {
                     "first_name": fake.first_name(),
                     "last_name": fake.last_name(),
+                    "author_profile_image": None
                 },
             }
         )
@@ -55,6 +56,7 @@ def generate_books(count: int = BOOKS_COUNT) -> None:
                 "model": "books_service.book",
                 "fields": {
                     "title": f"Book {pk}: part {random.randint(1, 5)}",
+                    "title_image": None,
                     "author": author_pk,
                     "cover": random.choice(["hard", "soft"]),
                     "inventory": random.randint(0, 100),
@@ -113,7 +115,7 @@ def generate_payments():
             "fields": {
                 "status": random.choice(("pending", "paid")),
                 "type": random.choice(("payment", "fee")),
-                "borrowing": random.randint(1, BORROWINGS_COUNT),
+                "borrowing": pk,
                 "session_url": fake.url(),
                 "session_id": session_id,
                 "money_to_pay": float(random_value),
