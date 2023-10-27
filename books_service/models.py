@@ -28,6 +28,7 @@ class Author(models.Model):
     )
 
     class Meta:
+        unique_together = ("first_name", "last_name")
         ordering = ["last_name", "first_name"]
 
     @property
