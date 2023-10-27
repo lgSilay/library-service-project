@@ -30,7 +30,7 @@ class Author(models.Model):
     subscribers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through="Subscription",
-        related_name="subscribers"
+        related_name="subscribed",
     )
 
     class Meta:
@@ -47,7 +47,9 @@ class Author(models.Model):
 
 class Subscription(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
     subscription_started = models.DateField(auto_now=True)
 
     def __str__(self) -> str:

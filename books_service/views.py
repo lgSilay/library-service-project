@@ -1,12 +1,12 @@
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Count
 
-from .models import Author, Book
+from .models import Author, Book, Subscription
 from .serializers.common import (
     BookSerializer,
     BookDetailSerializer,
@@ -66,6 +66,57 @@ class AuthorViewSet(CommonLogicMixin, viewsets.ModelViewSet):
             queryset = queryset.filter(books_count__gt=0)
 
         return queryset
+
+    @action(
+        methods=["POST", "DELETE"],
+        detail=True,
+        url_path="subscribe",
+        permission_classes=[IsAuthenticated],
+    )
+    def manage_subscribe(self, request, pk=None):
+        user = self.request.user
+        author = self.get_object()
+        user_subscriptions = user.subscribed.all()
+        user_subscribed = author in user_subscriptions
+
+        if self.request.method == "POST":
+            if not user.is_staff and not user_subscribed:
+                user.subscribed.add(author)
+                data = {
+                    "message": (
+                        f"Subscribed to {author.full_name} "
+                        f"successfully!"
+                    ),
+                }
+                return Response(data, status=status.HTTP_201_CREATED)
+
+            elif author in user_subscriptions:
+                data = {
+                    "impossible_to_subscribe": "You have already subscribed"
+                }
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        elif self.request.method == "DELETE":
+            data = {
+                "delete_status": (
+                    f"Subscribtion to {author.full_name} "
+                    f"canceled successfully! "
+                )
+            }
+            if user_subscribed:
+                subsctiption_date = Subscription.objects.get(
+                    user=user, author=author
+                ).subscription_started
+                data[
+                    "delete_status"
+                ] += f"You have been subscribed since {subsctiption_date}."
+                user.subscribed.remove(author)
+                return Response(data, status=status.HTTP_204_NO_CONTENT)
+
+            data[
+                "delete_status"
+            ] = f"You are not subscribed to {author.full_name} yet."
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
         parameters=[
