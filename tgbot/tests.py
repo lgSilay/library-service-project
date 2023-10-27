@@ -31,8 +31,10 @@ class TestSendNotification(unittest.TestCase):
     def test_missing_token(self, mock_get):
         mock_get.return_value = None
 
-        with self.assertRaises(Exception):
-            send_notification(self.receivers, self.notification)
+        self.assertEqual(
+            send_notification(self.receivers, self.notification),
+            self.receivers,
+        )
 
     @patch("tgbot.notificatior.requests.get")
     @patch("tgbot.notificatior.os.environ.get")
@@ -43,12 +45,13 @@ class TestSendNotification(unittest.TestCase):
             requests.HTTPError
         )
 
-        with self.assertRaises(requests.HTTPError):
-            send_notification(self.receivers, self.notification)
+        self.assertEqual(
+            send_notification(self.receivers, self.notification),
+            self.receivers,
+        )
 
 
 class TestBotHandlers(asynctest.TestCase):
-
     async def test_command_help_handler(self):
         message = asynctest.Mock(spec=Message)
         message.from_user = User(id=123, first_name="Test", is_bot=False)

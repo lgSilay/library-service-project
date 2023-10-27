@@ -2,6 +2,7 @@ import os
 
 import requests
 from dotenv import load_dotenv
+from requests import HTTPError
 
 
 def send_notification(receivers: list[int], notification: str):
@@ -14,5 +15,8 @@ def send_notification(receivers: list[int], notification: str):
             "chat_id": chat_id,
             "text": notification,
         }
-        resp = requests.get(url, params=params)
-        resp.raise_for_status()
+        try:
+            resp = requests.get(url, params=params)
+            resp.raise_for_status()
+        except HTTPError:
+            return receivers
