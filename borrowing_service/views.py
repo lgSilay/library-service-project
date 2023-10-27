@@ -22,10 +22,12 @@ from payments_service.utils import create_stripe_session
 
 
 class ReturnBorrowingView(APIView):
-    permission_classes = (IsOwnerOrAdmin,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
     def post(self, request: Request, pk: int) -> Response:
         borrowing = get_object_or_404(Borrowing, pk=pk)
+        self.check_object_permissions(request, borrowing)
+
         actual_return_date = timezone.now().date()
         data = {"actual_return_date": actual_return_date}
         serializer = BorrowingReturnSerializer(borrowing, data=data)
@@ -60,7 +62,7 @@ class BorrowingViewSet(
         "payments"
     )
     serializer_class = BorrowingSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
     def get_serializer_class(self):
         if self.action == "list":
