@@ -94,14 +94,21 @@ class AuthorViewSet(CommonLogicMixin, viewsets.ModelViewSet):
                         f"successfully!"
                     ),
                 }
-                logger.info("Subscribed user to author {author.id}", {"user": request.user})
+                logger.info(
+                    f"Subscribed user to author {author.id}",
+                    {"user": request.user}
+                )
                 return Response(data, status=status.HTTP_201_CREATED)
 
             elif author in user_subscriptions:
                 data = {
                     "impossible_to_subscribe": "You have already subscribed"
                 }
-                logger.info("Attempted to subscribe an already subscribed user to author {author.id}", {"user": request.user})
+                logger.info(
+                    "Attempted to subscribe an already subscribed "
+                    f"user to author {author.id}",
+                    {"user": request.user}
+                )
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         elif self.request.method == "DELETE":
@@ -119,13 +126,19 @@ class AuthorViewSet(CommonLogicMixin, viewsets.ModelViewSet):
                     "delete_status"
                 ] += f"You have been subscribed since {subsctiption_date}."
                 user.subscribed.remove(author)
-                logger.info("Unsubscribed user from author {author.id}", {"user": request.user})
+                logger.info(f"Unsubscribed user from author "
+                            f"{author.id}",
+                            {"user": request.user})
                 return Response(data, status=status.HTTP_204_NO_CONTENT)
 
             data[
                 "delete_status"
             ] = f"You are not subscribed to {author.full_name} yet."
-            logger.info("Attempted to unsubscribe an unsubscribed already user from author {author.id}", {"user": request.user})
+            logger.info(
+                "Attempted to unsubscribe an unsubscribed already user "
+                f"from author {author.id}",
+                {"user": request.user}
+            )
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(

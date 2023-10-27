@@ -112,7 +112,10 @@ class BorrowingViewSet(
             borrowing.expected_return_date - borrowing.borrow_date
         ).days * borrowing.book.daily_fee
         session_url = create_stripe_session(request, borrowing, money_to_pay)
-        logger.info("Created borrowing successful, expect payment", serializer.data)
+        logger.info(
+            "Created borrowing successful, expect payment",
+            serializer.data
+        )
         return Response(
             {"session_url": session_url},
             status=status.HTTP_307_TEMPORARY_REDIRECT,
