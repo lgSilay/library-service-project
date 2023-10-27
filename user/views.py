@@ -24,7 +24,7 @@ class CreateUserView(
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        logger.info("Create user", {"data": serializer.data})
+        logger.info("Created user", {"data": serializer.data})
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
@@ -47,7 +47,7 @@ class ManageUserView(
         if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
 
-        logger.info("Update user", {"data": serializer.data})
+        logger.info("Updated user", {"data": serializer.data})
         return Response(serializer.data)
 
 
@@ -71,7 +71,7 @@ class TelegramUserView(
         if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
 
-        logger.info("Update telegram user", {"data": serializer.data})
+        logger.info("Updated telegram user", {"data": serializer.data})
         return Response(serializer.data)
 
 

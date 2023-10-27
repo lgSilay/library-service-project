@@ -52,7 +52,7 @@ class ReturnBorrowingView(APIView):
                 return Response(
                     {"session_url": session_url}, status=status.HTTP_200_OK
                 )
-            logger.info("Return borrowing successful", serializer.data)
+            logger.info("Returned borrowing successful", serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -112,7 +112,7 @@ class BorrowingViewSet(
             borrowing.expected_return_date - borrowing.borrow_date
         ).days * borrowing.book.daily_fee
         session_url = create_stripe_session(request, borrowing, money_to_pay)
-        logger.info("Create borrowing successful, expect payment", serializer.data)
+        logger.info("Created borrowing successful, expect payment", serializer.data)
         return Response(
             {"session_url": session_url},
             status=status.HTTP_307_TEMPORARY_REDIRECT,
