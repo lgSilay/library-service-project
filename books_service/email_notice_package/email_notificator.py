@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from templated_email import send_templated_mail
+
 import django
 django.setup()
 from django.conf import settings   # noqa: E402
+
 
 
 class EmailNotificator:
@@ -37,7 +39,3 @@ class EmailNotificator:
                 "status": status,
             }
         )
-
-
-if __name__ == "__main__":
-    EmailNotificator.send_subscription_email()

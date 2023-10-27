@@ -159,6 +159,183 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
+    },
+    "formatters": {
+        "verbose": {
+            "format": (
+                "[%(asctime)s] %(levelname)s "
+                "[%(name)s:%(lineno)s] -> %(message)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "simple": {"format": "(%(name)s:%(lineno)s) %(message)s"},
+        "extended": {
+            "format": "%(levelname)s:%(name)s: %(message)s "
+            "(%(asctime)s; %(filename)s:%(lineno)d)",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    "handlers": {
+        "null": {
+            "class": "logging.NullHandler",
+        },
+        "main": {
+            "level": "DEBUG",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "error": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/errors.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "debug": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/debug.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "trash_error": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/trash_error.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "books_service_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/books_service_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "borrowing_service_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/borrowing_service_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "payments_service_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/payment_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "tg_bot_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/tg_bot_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "stripe_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/stripe_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "celery_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/stripe_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "users_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/user_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+    },
+    "loggers": {
+        "PIL": {
+            "handlers": ["main", "error"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+        "urllib3": {
+            "handlers": ["main", "error"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+        "django.db": {
+            "handlers": ["null"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.security.DisallowedHost": {
+            "handlers": ["trash_error"],
+            "propagate": False,
+        },
+        "": {
+            "handlers": ["main", "debug", "error"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.user": {
+            "handlers": ["debug", "error", "users_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "borrowing_service": {
+            "handlers": ["borrowing_service_file", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "books_service": {
+            "handlers": ["books_service_file", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "payments_service": {
+            "handlers": ["payments_service_file", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "tg_bot": {
+            "handlers": ["tg_bot_file", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "stripe": {
+            "handlers": ["stripe_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery": {
+            "handlers": ["celery_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
 FINE_MULTIPLIER = 2
 
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
