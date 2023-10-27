@@ -86,12 +86,5 @@ class Borrowing(models.Model):
 @receiver(post_save, sender=Borrowing)
 def notify_telegram(sender, instance, created, **kwargs):
     if created:
-        stuff = (
-            get_user_model()
-            .objects.filter(is_staff=1, telegram_id__isnull=False)
-            .distinct()
-            .values_list("telegram_id", flat=True)
-        )
-        stuff = list(stuff)
         info = str(instance)
-        send_notification(stuff, info)
+        send_notification(info)
