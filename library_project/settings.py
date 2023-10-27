@@ -123,7 +123,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30000),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
 }
@@ -177,7 +177,7 @@ LOGGING = {
         "null": {
             "class": "logging.NullHandler",
         },
-        "console": {
+        "main": {
             "level": "DEBUG",
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
@@ -207,15 +207,55 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
+        "books_service": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/books_service_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "borrowing_service": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/borrowing_service_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "payments_service": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/payment_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "tg_bot": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/tg_bot_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "stripe_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/stripe_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
     },
     "loggers": {
         "PIL": {
-            "handlers": ["console", "error"],
+            "handlers": ["main", "error"],
             "level": "CRITICAL",
             "propagate": False,
         },
         "urllib3": {
-            "handlers": ["console", "error"],
+            "handlers": ["main", "error"],
             "level": "CRITICAL",
             "propagate": False,
         },
@@ -229,13 +269,38 @@ LOGGING = {
             "propagate": False,
         },
         "": {
-            "handlers": ["console", "debug", "error"],
+            "handlers": ["main", "debug", "error"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "warning": {
-            "handlers": ["console", "debug", "error"],
-            "level": "WARNING",
+        "django.user": {
+            "handlers": ["main", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "borrowing_service": {
+            "handlers": ["borrowing_service", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "books_service": {
+            "handlers": ["books_service", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "payments_service": {
+            "handlers": ["payments_service", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "tg_bot": {
+            "handlers": ["tg_bot", "debug", "error"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "stripe": {
+            "handlers": ["stripe_file"],
+            "level": "INFO",
             "propagate": False,
         },
     },
