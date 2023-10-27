@@ -183,7 +183,7 @@ LOGGING = {
         "null": {
             "class": "logging.NullHandler",
         },
-        "console": {
+        "main": {
             "level": "DEBUG",
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
