@@ -207,7 +207,7 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
-        "books_service": {
+        "books_service_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/books_service_info.log",
@@ -215,7 +215,7 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
-        "borrowing_service": {
+        "borrowing_service_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/borrowing_service_info.log",
@@ -223,7 +223,7 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
-        "payments_service": {
+        "payments_service_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/payment_info.log",
@@ -231,7 +231,7 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
-        "tg_bot": {
+        "tg_bot_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/tg_bot_info.log",
@@ -240,6 +240,14 @@ LOGGING = {
             "formatter": "extended",
         },
         "stripe_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/stripe_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
+        "celery_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/stripe_info.log",
@@ -279,27 +287,32 @@ LOGGING = {
             "propagate": False,
         },
         "borrowing_service": {
-            "handlers": ["borrowing_service", "debug", "error"],
+            "handlers": ["borrowing_service_file", "debug", "error"],
             "level": "INFO",
             "propagate": False,
         },
         "books_service": {
-            "handlers": ["books_service", "debug", "error"],
+            "handlers": ["books_service_file", "debug", "error"],
             "level": "INFO",
             "propagate": False,
         },
         "payments_service": {
-            "handlers": ["payments_service", "debug", "error"],
+            "handlers": ["payments_service_file", "debug", "error"],
             "level": "INFO",
             "propagate": False,
         },
         "tg_bot": {
-            "handlers": ["tg_bot", "debug", "error"],
+            "handlers": ["tg_bot_file", "debug", "error"],
             "level": "INFO",
             "propagate": False,
         },
         "stripe": {
             "handlers": ["stripe_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery": {
+            "handlers": ["celery_file"],
             "level": "INFO",
             "propagate": False,
         },
