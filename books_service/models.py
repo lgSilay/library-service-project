@@ -5,6 +5,7 @@ from typing import Union
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 
 def image_file_path(instance: Union["Book", "Author"], filename: str) -> str:
@@ -26,8 +27,14 @@ class Author(models.Model):
         blank=True,
         default=None,
     )
+    subscribers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through="Subscription",
+        related_name="subscribed",
+    )
 
     class Meta:
+        unique_together = ("first_name", "last_name")
         ordering = ["last_name", "first_name"]
 
     @property
@@ -36,6 +43,21 @@ class Author(models.Model):
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+
+class Subscription(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    subscription_started = models.DateField(auto_now=True)
+
+    def __str__(self) -> str:
+        return (
+            f"{self.user} subscribed to "
+            f"{self.author.full_name} since "
+            f"{self.subscription_started}"
+        )
 
 
 class Book(models.Model):
