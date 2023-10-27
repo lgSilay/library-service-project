@@ -1,0 +1,56 @@
+{% block subject %}Subscibe to {{ author_full_name }}{% endblock %}
+{% block html %}
+   {% if status %}
+  <div class="container">
+    <div class="jumbotron">
+      <h3>Subscription Confirmation</h3>
+      <p>Dear User,</p>
+      <p>You have successfully subscribed to updates from {{ author_full_name }}.</p>
+      <p>Here are the details of your subscription:</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Subscription Date</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ email }}</td>
+            <td>{{ date_subscription }}</td>
+            <td>{{ author_full_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Thank you for subscribing!</p>
+    </div>
+  </div>
+     {% else %}
+     <div class="container">
+    <div class="jumbotron">
+      <h3>Unsubscription Confirmation</h3>
+      <p>Dear User,</p>
+      <p>You have successfully unsubscribed from updates from {{ author_full_name }}.</p>
+      <p>Here are the details of your unsubscription:</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Subscription Date</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ email }}</td>
+            <td>{{ date_subscription }}</td>
+            <td>{{ author_full_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>We're sorry to see you go!</p>
+    </div>
+  </div>
+   {% endif %}
+{% endblock %}

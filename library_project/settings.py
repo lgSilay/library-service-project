@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_extensions",
     "debug_toolbar",
+    "templated_email",
     "books_service.apps.BooksServiceConfig",
     "user",
     "borrowing_service",
@@ -168,8 +169,10 @@ LOGGING = {
     },
     "formatters": {
         "verbose": {
-            "format": "[%(asctime)s] %(levelname)s "
-                      "[%(name)s:%(lineno)s] -> %(message)s",
+            "format": (
+                "[%(asctime)s] %(levelname)s "
+                "[%(name)s:%(lineno)s] -> %(message)s"
+            ),
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
         "simple": {"format": "(%(name)s:%(lineno)s) %(message)s"},
@@ -334,3 +337,14 @@ LOGGING = {
 }
 
 FINE_MULTIPLIER = 2
+
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 465
+EMAIL_TIMEOUT = 10
+
+TEMPLATED_EMAIL_FILE_EXTENSION = 'html'
