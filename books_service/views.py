@@ -1,3 +1,5 @@
+import logging
+
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -17,6 +19,9 @@ from .serializers.nested import AuthorImageSerializer, BookImageSerializer
 from .permissions import IsAdminOrReadOnly
 
 
+logger = logging.getLogger("book_service")
+
+
 class CommonLogicMixin:
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -33,6 +38,7 @@ class CommonLogicMixin:
 
         if serializer.is_valid():
             serializer.save()
+            logger.info("Uploaded image to book", serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -88,18 +94,20 @@ class AuthorViewSet(CommonLogicMixin, viewsets.ModelViewSet):
                         f"successfully!"
                     ),
                 }
+                logger.info("Subscribed user to author {author.id}", {"user": request.user})
                 return Response(data, status=status.HTTP_201_CREATED)
 
             elif author in user_subscriptions:
                 data = {
                     "impossible_to_subscribe": "You have already subscribed"
                 }
+                logger.info("Attempted to subscribe an already subscribed user to author {author.id}", {"user": request.user})
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         elif self.request.method == "DELETE":
             data = {
                 "delete_status": (
-                    f"Subscribtion to {author.full_name} "
+                    f"Subscription to {author.full_name} "
                     f"canceled successfully! "
                 )
             }
@@ -111,11 +119,13 @@ class AuthorViewSet(CommonLogicMixin, viewsets.ModelViewSet):
                     "delete_status"
                 ] += f"You have been subscribed since {subsctiption_date}."
                 user.subscribed.remove(author)
+                logger.info("Unsubscribed user from author {author.id}", {"user": request.user})
                 return Response(data, status=status.HTTP_204_NO_CONTENT)
 
             data[
                 "delete_status"
             ] = f"You are not subscribed to {author.full_name} yet."
+            logger.info("Attempted to unsubscribe an unsubscribed already user from author {author.id}", {"user": request.user})
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
