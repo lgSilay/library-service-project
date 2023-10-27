@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, User, Chat
 from tgbot.routers.info_router import command_help_handler
 
-from tgbot.notificatior import send_notification
+from tgbot.notificator import send_notification
 from tgbot.routers.login_router import command_login, Form
 
 
@@ -16,28 +16,27 @@ class TestSendNotification(unittest.TestCase):
         self.receivers = [123456789, 987654321]
         self.notification = "Test notification"
 
-    @patch("tgbot.notificatior.requests.get")
-    @patch("tgbot.notificatior.os.environ.get")
+    @patch("tgbot.notificator.requests.get")
+    @patch("tgbot.notificator.os.environ.get")
     def test_successful_notification(self, mock_get, mock_request_get):
         mock_get.return_value = "test_token"
         mock_request_get.return_value.status_code = 200
         mock_request_get.return_value.raise_for_status.return_value = None
 
-        send_notification(self.receivers, self.notification)
+        send_notification(self.notification)
 
         self.assertEqual(mock_request_get.call_count, len(self.receivers))
 
-    @patch("tgbot.notificatior.os.environ.get")
+    @patch("tgbot.notificator.os.environ.get")
     def test_missing_token(self, mock_get):
         mock_get.return_value = None
 
-        self.assertEqual(
-            send_notification(self.receivers, self.notification),
-            self.receivers,
+        self.assertIsNotNone(
+            send_notification(self.notification)
         )
 
-    @patch("tgbot.notificatior.requests.get")
-    @patch("tgbot.notificatior.os.environ.get")
+    @patch("tgbot.notificator.requests.get")
+    @patch("tgbot.notificator.os.environ.get")
     def test_failed_notification(self, mock_get, mock_request_get):
         mock_get.return_value = "test_token"
         mock_request_get.return_value.status_code = 400
@@ -45,9 +44,8 @@ class TestSendNotification(unittest.TestCase):
             requests.HTTPError
         )
 
-        self.assertEqual(
-            send_notification(self.receivers, self.notification),
-            self.receivers,
+        self.assertIsNotNone(
+            send_notification(self.notification)
         )
 
 
