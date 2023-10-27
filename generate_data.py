@@ -2,8 +2,10 @@
 NOTICE:
 - if you want change amount of data – change the COUNT constant
 - the DB will be deleted, created and loaded automatically if you run script
-- into your PyCharm or environment  set the env. variable DJANGO_SETTINGS_MODULE=library_project.settings
-before running this script. Example: export DJANGO_SETTINGS_MODULE=library_project.settings for terminal
+- into your PyCharm or environment  set the env. variable
+ DJANGO_SETTINGS_MODULE=library_project.settings
+before running this script.
+Example: export DJANGO_SETTINGS_MODULE=library_project.settings for terminal
 on MAC OS. Search command for Windows if needed.
 """
 import json
@@ -17,7 +19,7 @@ from faker import Faker
 import django
 
 django.setup()
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password   # noqa: E402
 
 
 fake = Faker()

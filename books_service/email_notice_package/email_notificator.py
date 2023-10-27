@@ -1,7 +1,11 @@
 from datetime import datetime
 
 from templated_email import send_templated_mail
-from django.conf import settings
+
+import django
+django.setup()
+from django.conf import settings   # noqa: E402
+
 
 
 class EmailNotificator:

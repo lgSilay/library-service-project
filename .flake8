@@ -8,4 +8,4 @@ exclude =
     **migrations
     venv
     tests
-    generate_data.py
+
