@@ -182,7 +182,7 @@ LOGGING = {
         "null": {
             "class": "logging.NullHandler",
         },
-        "console": {
+        "main": {
             "level": "DEBUG",
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
@@ -260,6 +260,14 @@ LOGGING = {
             "backupCount": 7,
             "formatter": "extended",
         },
+        "users_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/user_info.log",
+            "maxBytes": 1024 * 1024 * 5,
+            "backupCount": 7,
+            "formatter": "extended",
+        },
     },
     "loggers": {
         "PIL": {
@@ -287,7 +295,7 @@ LOGGING = {
             "propagate": False,
         },
         "django.user": {
-            "handlers": ["main", "debug", "error"],
+            "handlers": ["debug", "error", "users_file"],
             "level": "INFO",
             "propagate": False,
         },
