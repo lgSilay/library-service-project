@@ -22,3 +22,19 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class TelegramUserSerializer(serializers.ModelSerializer):
+    """Update user telegram_id when logged in from telegram"""
+    class Meta:
+        model = get_user_model()
+        fields = ("telegram_id",)
+
+        def update(self, instance, validated_data):
+            telegram_id = validated_data.pop("telegram_id", None)
+            user = super().update(instance, validated_data)
+            if telegram_id:
+                user["telegram_id"] = telegram_id
+                user.save()
+
+            return user

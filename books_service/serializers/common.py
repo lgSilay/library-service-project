@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Author, Book
+from books_service.models import Author, Book
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -13,6 +13,7 @@ class AuthorSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "full_name",
+            "author_profile_image",
             "books_count",
         )
 
@@ -36,6 +37,7 @@ class BookListSerializer(BookSerializer):
         fields = (
             "id",
             "title",
+            "title_image",
             "author",
             "author_full_name",
             "cover",
@@ -56,6 +58,7 @@ class BookDetailSerializer(BookListSerializer):
         fields = (
             "id",
             "title",
+            "title_image",
             "author",
             "author_full_name",
             "author_link",

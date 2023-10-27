@@ -1,4 +1,5 @@
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
@@ -9,13 +10,13 @@ from payments_service.serializers.common import (
     PaymentListSerializer,
     PaymentDetailSerializer,
 )
-from payments_service.permissions import IsOwnerOrAdminReadOnly
+from payments_service.permissions import IsOwnerOrAdmin
 
 
 class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Payment.objects.select_related("borrowing__book")
     serializer_class = PaymentDetailSerializer
-    permission_classes = (IsOwnerOrAdminReadOnly,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
     def get_queryset(self):
         queryset = self.queryset
