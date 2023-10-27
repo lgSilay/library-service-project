@@ -3,6 +3,12 @@ from django.db.models import Q
 from django.utils import timezone
 
 from borrowing_service.models import Borrowing
+from tgbot.notificatior import send_notification
+
+
+@shared_task
+def send_notification_task(message: str) -> None:
+    send_notification(message)
 
 
 @shared_task
