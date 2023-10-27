@@ -33,8 +33,7 @@ class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
         }
 
         for param, filter_condition in filter_mapping.items():
-            value = self.request.query_params.get(param)
-            if value:
+            if value := self.request.query_params.get(param):
                 filters[filter_condition] = value
 
         queryset = queryset.filter(**filters)
@@ -76,24 +75,22 @@ class AuthorViewSet(BasePermission, viewsets.ModelViewSet):
                 name="first-name",
                 type=str,
                 description=(
-                        "Filter by author's first name (case-insensitive "
-                        "partial match) (e.g., ?first-name=John)."
+                    "Filter by author's first name (case-insensitive "
+                    "partial match) (e.g., ?first-name=John)."
                 ),
             ),
             OpenApiParameter(
                 name="last-name",
                 type=str,
                 description=(
-                        "Filter by author's last name (case-insensitive "
-                        "partial match) (e.g., ?last-name=Johnson)."
+                    "Filter by author's last name (case-insensitive "
+                    "partial match) (e.g., ?last-name=Johnson)."
                 ),
             ),
             OpenApiParameter(
                 name="no-books",
                 type=str,
-                description=(
-                        "Filter authors with no books (e.g., ?no-books)"
-                ),
+                description="Filter authors with no books (e.g., ?no-books)",
             ),
             OpenApiParameter(
                 name="has-books",
@@ -124,20 +121,78 @@ class BookViewSet(BasePermission, viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+        filters = {}
 
-        title = self.request.query_params.get("title")
-        if title:
-            queryset = queryset.filter(title__icontains=title)
+        filter_mapping = {
+            "title": "title__icontains",
+            "author-id": "author__id",
+            "author-first-name": "author__first_name__icontains",
+            "author-last-name": "author__last_name__icontains",
+            "cover": "cover__icontains",
+        }
+
+        for param, filter_condition in filter_mapping.items():
+            if value := self.request.query_params.get(param):
+                filters[filter_condition] = value
+
+        queryset = queryset.filter(**filters)
+
+        if "available" in self.request.query_params:
+            queryset = queryset.filter(inventory__gt=0)
+        if "unavailable" in self.request.query_params:
+            queryset = queryset.filter(inventory=0)
 
         return queryset
 
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                "title",
-                type={"type": "str"},
-                description="Filter by title fragment (ex. ?title=harry)",
-            )
+                name="title",
+                type=str,
+                description=(
+                    "Filter by book title (case-insensitive "
+                    "partial match) (e.g., ?title=example)."
+                ),
+            ),
+            OpenApiParameter(
+                name="author-id",
+                type=int,
+                description="Filter by author's ID (e.g., ?author-id=123).",
+            ),
+            OpenApiParameter(
+                name="author-first-name",
+                type=str,
+                description=(
+                    "Filter by author's first name (case-insensitive "
+                    "partial match) (e.g., ?author-first-name=John)."
+                ),
+            ),
+            OpenApiParameter(
+                name="author-last-name",
+                type=str,
+                description=(
+                    "Filter by author's last name (case-insensitive "
+                    "partial match) (e.g., ?author-last-name=Johnson)."
+                ),
+            ),
+            OpenApiParameter(
+                name="cover",
+                type=str,
+                description=(
+                    "Filter by book cover (case-insensitive "
+                    "partial match) (e.g., ?cover=example)."
+                ),
+            ),
+            OpenApiParameter(
+                name="available",
+                type=str,
+                description="Filter available books (e.g., ?available).",
+            ),
+            OpenApiParameter(
+                name="unavailable",
+                type=str,
+                description="Filter unavailable books (e.g., ?unavailable).",
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):
