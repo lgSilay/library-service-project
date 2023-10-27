@@ -27,4 +27,4 @@ def send_notification(notification: str):
             resp = requests.get(url, params=params)
             resp.raise_for_status()
         except HTTPError:
-            return recievers 
+            return recievers

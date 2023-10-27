@@ -122,7 +122,8 @@ class BorrowingViewSet(
             OpenApiParameter(
                 "user_id",
                 type={"type": "list", "items": {"type": "number"}},
-                description="Only for staff: filter by user (ex. ?user_id=1,2)",
+                description="Only for staff: filter"
+                            " by user (ex. ?user_id=1,2)",
             ),
         ]
     )
