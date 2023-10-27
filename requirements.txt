@@ -70,3 +70,4 @@ django-celery-beat==2.5.0
 drf-spectacular==0.26.5
 stripe==7.1.0
 Pillow==10.1.0
+asynctest==0.13.0

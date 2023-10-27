@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch
 
-import asynctest as asynctest
 import requests
 import asynctest
 from aiogram.fsm.context import FSMContext

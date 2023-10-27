@@ -11,5 +11,3 @@ async def command_help_handler(message: Message) -> None:
         "It is a bot where you can receive notifications.\n"
         "Please, use /login to attach your website profile."
     )
-
-
