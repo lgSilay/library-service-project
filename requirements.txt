@@ -67,3 +67,4 @@ yarl==1.9.2
 celery==5.3.4
 redis==5.0.1
 django-celery-beat==2.5.0
+drf-spectacular==0.26.5
