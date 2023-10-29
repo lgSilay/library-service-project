@@ -15,6 +15,7 @@ class PaymentDetailSerializer(serializers.ModelSerializer):
             "status",
             "borrowing",
             "session_url",
+            "expires_at",
             "money_to_pay",
         )
 
@@ -32,5 +33,6 @@ class PaymentListSerializer(serializers.ModelSerializer):
             "status",
             "borrowing",
             "session_url",
+            "expires_at",
             "money_to_pay",
         )
