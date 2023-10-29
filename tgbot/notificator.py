@@ -1,9 +1,13 @@
+import logging
 import os
 from django.contrib.auth import get_user_model
 
 import requests
 from dotenv import load_dotenv
 from requests import HTTPError
+
+
+logger = logging.getLogger("tg_bot")
 
 
 def send_notification(notification: str):
@@ -27,4 +31,5 @@ def send_notification(notification: str):
             resp = requests.get(url, params=params)
             resp.raise_for_status()
         except HTTPError:
+            logger.error(f"Wrong telegram id {chat_id}")
             return recievers
