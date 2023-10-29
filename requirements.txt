@@ -72,3 +72,4 @@ stripe==7.1.0
 Pillow==10.1.0
 asynctest==0.13.0
 flake8==6.1.0
+django-templated-email==3.0.1
