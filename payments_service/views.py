@@ -67,7 +67,10 @@ class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             if session["payment_status"] == "paid":
                 payment.status = "paid"
                 payment.save()
-                message = f"{payment.money_to_pay}$ for {payment.borrowing} were paid"
+                message = (
+                    f"{payment.money_to_pay}$ for "
+                    f"{payment.borrowing} were paid"
+                )
                 send_notification_task.delay(message)
                 return Response(
                     {"info": "Your payment was successful"},

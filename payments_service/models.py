@@ -29,4 +29,7 @@ class Payment(models.Model):
         ordering = ("status",)
 
     def __str__(self) -> str:
-        return f"{self.borrowing} {self.money_to_pay}$ {self.type} ({self.status})"
+        return (
+            f"{self.borrowing} {self.money_to_pay}$ "
+            f"{self.type} ({self.status})"
+        )
