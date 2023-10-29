@@ -74,4 +74,4 @@ class Borrowing(models.Model):
         ordering = ["expected_return_date"]
 
     def __str__(self) -> str:
-        return f"{self.book.title} borrowed by {self.user.email}"
+        return f"'{self.book.title}' borrowed by {self.user.email}"

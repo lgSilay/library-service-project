@@ -20,6 +20,7 @@ from borrowing_service.serializers.common import (
     BorrowingCreateSerializer,
     BorrowingReturnSerializer,
 )
+from payments_service.models import Payment
 from payments_service.utils import create_stripe_session
 
 
@@ -46,11 +47,19 @@ class ReturnBorrowingView(APIView):
                     * borrowing.book.daily_fee
                     * settings.FINE_MULTIPLIER
                 )
-                session_url = create_stripe_session(
-                    request, borrowing, money_to_pay, type="fine"
+                session = create_stripe_session(
+                    request, borrowing, money_to_pay
+                )
+                Payment.objects.create(
+                    type="fine",
+                    borrowing=borrowing,
+                    session_url=session.url,
+                    session_id=session.id,
+                    expires_at=session.expires_at,
                 )
                 return Response(
-                    {"session_url": session_url}, status=status.HTTP_200_OK
+                    {"session_url": session},
+                    status=status.HTTP_307_TEMPORARY_REDIRECT,
                 )
             logger.info("Returned borrowing successful", serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -111,13 +120,19 @@ class BorrowingViewSet(
         money_to_pay = (
             borrowing.expected_return_date - borrowing.borrow_date
         ).days * borrowing.book.daily_fee
-        session_url = create_stripe_session(request, borrowing, money_to_pay)
+        session = create_stripe_session(request, borrowing, money_to_pay)
         logger.info(
-            "Created borrowing successful, expect payment",
-            serializer.data
+            "Created borrowing successful, expect payment", serializer.data
+        )
+        Payment.objects.create(
+            type="payment",
+            borrowing=borrowing,
+            session_url=session.url,
+            session_id=session.id,
+            expires_at=session.expires_at,
         )
         return Response(
-            {"session_url": session_url},
+            {"session_url": session.url},
             status=status.HTTP_307_TEMPORARY_REDIRECT,
         )
 
@@ -133,7 +148,7 @@ class BorrowingViewSet(
                 "user_id",
                 type={"type": "list", "items": {"type": "number"}},
                 description="Only for staff: "
-                            "filter by user (ex. ?user_id=1,2)",
+                "filter by user (ex. ?user_id=1,2)",
             ),
         ]
     )
