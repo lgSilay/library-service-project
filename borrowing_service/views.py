@@ -1,4 +1,5 @@
 from django.utils import timezone
+from rest_framework_simplejwt.settings import settings
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -13,6 +14,7 @@ from borrowing_service.serializers.common import (
     BorrowingDetailSerializer,
     BorrowingCreateSerializer,
     BorrowingReturnSerializer,
+    EmptySerializer,
 )
 from payments_service.utils import create_stripe_session
 
@@ -40,7 +42,7 @@ class BorrowingViewSet(
             return BorrowingCreateSerializer
 
         if self.action == "return_borrowing":
-            return BorrowingReturnSerializer
+            return EmptySerializer
 
         return self.serializer_class
 
@@ -80,7 +82,7 @@ class BorrowingViewSet(
         )
 
     @action(
-        methods=["GET"],
+        methods=["POST"],
         detail=True,
         url_path="return_borrowing",
         permission_classes=[IsAuthenticated],
@@ -88,11 +90,25 @@ class BorrowingViewSet(
     def return_borrowing(self, request, pk=None):
         """Endpoint to return borrowing"""
         borrowing = self.get_object()
-        actual_date_today = {"actual_return_date": timezone.now().date()}
-        serializer = self.get_serializer(borrowing, data=actual_date_today)
+        actual_return_date = timezone.now().date()
+        data = {"actual_return_date": actual_return_date}
+        serializer = BorrowingReturnSerializer(borrowing, data=data)
 
         if serializer.is_valid():
             serializer.save()
+            borrowing.refresh_from_db()
+            if actual_return_date > borrowing.expected_return_date:
+                money_to_pay = (
+                    (actual_return_date - borrowing.expected_return_date).days
+                    * borrowing.book.daily_fee
+                    * settings.FINE_MULTIPLIER
+                )
+                session_url = create_stripe_session(
+                    request, borrowing, money_to_pay, type="fine"
+                )
+                return Response(
+                    {"session_url": session_url}, status=status.HTTP_200_OK
+                )
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -103,13 +119,13 @@ class BorrowingViewSet(
                 "is_active",
                 type={"type": "str"},
                 description="Filter to see the "
-                            "unreturned borrowing (ex. ?is_active)"
+                "unreturned borrowing (ex. ?is_active)",
             ),
             OpenApiParameter(
                 "user_id",
                 type={"type": "list", "items": {"type": "number"}},
-                description="Only for staff: filter by user (ex. ?user_id=1,2)"
-            )
+                description="Only for staff: filter by user (ex. ?user_id=1,2)",
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):

@@ -8,6 +8,10 @@ from payments_service.serializers.nested import PaymentBorrowingSerializer
 from borrowing_service.models import Borrowing
 
 
+class EmptySerializer(serializers.Serializer):
+    ...
+
+
 class BorrowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
