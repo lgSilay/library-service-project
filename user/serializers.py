@@ -30,11 +30,11 @@ class TelegramUserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ("telegram_id",)
 
-        def update(self, instance, validated_data):
-            telegram_id = validated_data.pop("telegram_id", None)
-            user = super().update(instance, validated_data)
-            if telegram_id:
-                user["telegram_id"] = telegram_id
-                user.save()
+    def update(self, instance, validated_data):
+        telegram_id = validated_data.pop("telegram_id", None)
+        user = super().update(instance, validated_data)
+        if telegram_id:
+            user["telegram_id"] = telegram_id
+            user.save()
 
-            return user
+        return user

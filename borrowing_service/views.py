@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from borrowing_service.models import Borrowing
-from borrowing_service.permissions import IsOwnerOrAdmin
+from library_project.permissions import IsOwnerOrAdmin
 from borrowing_service.serializers.common import (
     BorrowingSerializer,
     BorrowingListSerializer,

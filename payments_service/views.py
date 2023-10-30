@@ -16,7 +16,7 @@ from payments_service.serializers.common import (
     PaymentListSerializer,
     PaymentDetailSerializer,
 )
-from payments_service.permissions import IsOwnerOrAdmin
+from library_project.permissions import IsBorrowingOwnerOrAdmin
 from payments_service.utils import create_stripe_session
 
 
@@ -24,7 +24,7 @@ logger = logging.getLogger("payments_service")
 
 
 class RenewPaymentSessionView(APIView):
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
+    permission_classes = (IsAuthenticated, IsBorrowingOwnerOrAdmin)
 
     def post(self, request, pk):
         payment = get_object_or_404(Payment, pk=pk)
@@ -49,7 +49,7 @@ class RenewPaymentSessionView(APIView):
 class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Payment.objects.select_related("borrowing__book")
     serializer_class = PaymentDetailSerializer
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
+    permission_classes = (IsAuthenticated, IsBorrowingOwnerOrAdmin)
 
     def get_queryset(self):
         queryset = self.queryset

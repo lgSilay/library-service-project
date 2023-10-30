@@ -8,15 +8,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Count
 
-from .models import Author, Book, Subscription
-from .serializers.common import (
+from books_service.models import Author, Book, Subscription
+from books_service.serializers.common import (
     BookSerializer,
     BookDetailSerializer,
     BookListSerializer,
     AuthorSerializer,
 )
-from .serializers.nested import AuthorImageSerializer, BookImageSerializer
-from .permissions import IsAdminOrReadOnly
+from books_service.serializers.nested import AuthorImageSerializer, BookImageSerializer
+from library_project.permissions import IsAdminOrReadOnly
 
 
 logger = logging.getLogger("book_service")
