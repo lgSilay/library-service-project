@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +18,9 @@ from payments_service.serializers.common import (
 )
 from payments_service.permissions import IsOwnerOrAdmin
 from payments_service.utils import create_stripe_session
+
+
+logger = logging.getLogger("payments_service")
 
 
 class RenewPaymentSessionView(APIView):
@@ -72,6 +77,7 @@ class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
                     f"{payment.borrowing} were paid"
                 )
                 send_notification_task.delay(message)
+                logger.info(f"Successful payment {payment.id}")
                 return Response(
                     {"info": "Your payment was successful"},
                     status=status.HTTP_200_OK,
@@ -81,6 +87,7 @@ class PaymentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     @action(methods=["GET"], detail=False, url_path="cancel")
     def order_cancel(self, request):
+        logger.info(f"Delayed payment")
         return Response(
             {
                 "info": (
