@@ -6,4 +6,4 @@ class BorrowingServiceConfig(AppConfig):
     name = "borrowing_service"
 
     def ready(self) -> None:
-        import borrowing_service.handlers
+        from borrowing_service import signals
