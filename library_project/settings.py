@@ -162,6 +162,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "borrowing_service.tasks.check_overdue_borrowings",
         "schedule": crontab(minute=0, hour=7),
     },
+    "check_expired_payments": {
+        "task": "payments_service.tasks.check_expired_payments",
+        "schedule": crontab(minute="*")
+    }
 }
 
 

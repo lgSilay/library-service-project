@@ -22,10 +22,14 @@ class Payment(models.Model):
     )
     session_url = models.URLField()
     session_id = models.CharField(max_length=255)
+    expires_at = models.PositiveBigIntegerField()
     money_to_pay = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         ordering = ("status",)
 
     def __str__(self) -> str:
-        return f"{self.type} ({self.status})"
+        return (
+            f"{self.borrowing} {self.money_to_pay}$ "
+            f"{self.type} ({self.status})"
+        )

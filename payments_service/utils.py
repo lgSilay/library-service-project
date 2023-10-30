@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.request import Request
 import stripe
 from django.conf import settings
@@ -14,8 +16,7 @@ def create_stripe_session(
     request: Request,
     borrowing: Borrowing,
     money_to_pay: float,
-    type="payment",
-) -> str:
+):
     session = stripe.checkout.Session.create(
         line_items=[
             {
@@ -34,11 +35,4 @@ def create_stripe_session(
         + "?session_id={CHECKOUT_SESSION_ID}",
         cancel_url=reverse("payments:payment-order-cancel", request=request),
     )
-    Payment.objects.create(
-        type=type,
-        borrowing=borrowing,
-        session_url=session.url,
-        session_id=session.id,
-        money_to_pay=money_to_pay,
-    )
-    return session.url
+    return session
