@@ -1,12 +1,9 @@
-import json
-
 from rest_framework.request import Request
 import stripe
 from django.conf import settings
 from rest_framework.reverse import reverse
 
 from borrowing_service.models import Borrowing
-from payments_service.models import Payment
 
 
 stripe.api_key = settings.STRIPE_SECRET
