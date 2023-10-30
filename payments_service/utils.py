@@ -1,5 +1,3 @@
-import json
-
 from rest_framework.request import Request
 import stripe
 from django.conf import settings
