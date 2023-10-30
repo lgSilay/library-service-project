@@ -177,6 +177,10 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
+CELERY_BROKER_URL = "redis://localhost"
+
+CELERY_RESULT_BACKEND = "redis://localhost"
+
 
 LOGGING = {
     "version": 1,
