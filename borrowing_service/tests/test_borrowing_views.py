@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
+from django.utils import timezone
+
 
 from books_service.models import Book, Author
 from borrowing_service.models import Borrowing
@@ -54,8 +56,16 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         )
 
     def test_list_borrowings(self) -> None:
-        borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
-        borrowing2 = sample_borrowing(self.user, self.book, "2023-11-15")
+        borrowing1 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
+        borrowing2 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
         res = self.client.get(BORROWING_URL)
         borrowings = Borrowing.objects.all()
         serializer = BorrowingListSerializer(borrowings, many=True)
@@ -64,13 +74,25 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         self.assertEqual(res.data["results"], serializer.data)
 
     def test_filter_borrowings_by_user_id(self) -> None:
-        borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
-        borrowing2 = sample_borrowing(self.user, self.book, "2023-11-15")
+        borrowing1 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
+        borrowing2 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
 
         other_user = get_user_model().objects.create_user(
             email="otheruser@example.com", password="otherpassword"
         )
-        borrowing3 = sample_borrowing(other_user, self.book, "2023-11-05")
+        borrowing3 = sample_borrowing(
+            other_user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
 
         res = self.client.get(BORROWING_URL, {"user_id": f"{self.user.id}"})
 
@@ -78,10 +100,21 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         self.assertEqual(len(res.data["results"]), 2)
 
     def test_filter_borrowings_by_is_active(self) -> None:
-        borrowing1 = sample_borrowing(self.user, self.book, "2023-10-30")
-        borrowing2 = sample_borrowing(self.user, self.book, "2023-11-15")
+        borrowing1 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
+        borrowing2 = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
         borrowing3 = sample_borrowing(
-            self.user, self.book, "2023-11-20", "2023-11-22"
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+            timezone.now().date() + timezone.timedelta(days=7),
         )
 
         res = self.client.get(BORROWING_URL, {"is_active": "true"})
@@ -90,7 +123,11 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         self.assertEqual(len(res.data["results"]), 2)
 
     def test_retrieve_borrowing_detail(self) -> None:
-        borrowing = sample_borrowing(self.user, self.book, "2023-10-30")
+        borrowing = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+        )
 
         url = reverse(
             "borrowing_service:borrowing-detail", args=[borrowing.id]
@@ -115,21 +152,26 @@ class AuthenticatedBorrowingViewSetTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_return_borrowing(self) -> None:
-        borrowing = sample_borrowing(self.user, self.book, "2023-10-30")
-        url = reverse(
-            "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
+        borrowing = sample_borrowing(
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
         )
-        res = self.client.get(url)
+        url = reverse("borrowing_service:order_return", args=[borrowing.id])
+        res = self.client.post(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         borrowing.refresh_from_db()
         self.assertIsNotNone(borrowing.actual_return_date)
 
     def test_return_borrowing_already_returned(self) -> None:
         borrowing = sample_borrowing(
-            self.user, self.book, "2023-10-30", "2023-10-31"
+            self.user,
+            self.book,
+            timezone.now().date() + timezone.timedelta(days=7),
+            timezone.now().date() + timezone.timedelta(days=7),
         )
         url = reverse(
-            "borrowing_service:borrowing-return-borrowing", args=[borrowing.id]
+            "borrowing_service:order_return", args=[borrowing.id]
         )
-        res = self.client.get(url)
+        res = self.client.post(url)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
