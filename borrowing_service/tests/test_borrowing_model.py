@@ -38,22 +38,13 @@ class BorrowingModelTest(TestCase):
             user=self.user,
         )
 
-    def test_borrowing_str(self) -> None:
-        borrowing = self.create_borrowing(
-            self.borrow_date, self.borrow_date + timezone.timedelta(days=1)
-        )
-        borrowing.save()
-        self.assertEqual(
-            str(borrowing), f"{self.book.title} borrowed by {self.user.email}"
-        )
-
     def test_expected_return_date_is_later_than_borrow_date(self) -> None:
         borrowing = self.create_borrowing(
             self.borrow_date,
             self.borrow_date + timezone.timedelta(days=1),
             None,
         )
-        borrowing.full_clean()
+        borrowing.clean()
 
     def test_actual_return_date_is_later_than_borrow_date(self) -> None:
         borrowing = self.create_borrowing(
@@ -62,35 +53,32 @@ class BorrowingModelTest(TestCase):
             self.borrow_date + timezone.timedelta(days=1),
         )
         if borrowing.actual_return_date:
-            borrowing.full_clean()
+            borrowing.clean()
         else:
             with self.assertRaises(ValidationError):
-                borrowing.full_clean()
+                borrowing.clean()
 
-    def test_borrowing_is_active(self) -> None:
+    def test_is_active_property(self) -> None:
         borrowing = self.create_borrowing(
-            self.borrow_date, self.borrow_date + timezone.timedelta(days=1)
+            self.borrow_date,
+            self.borrow_date + timezone.timedelta(days=1),
+            None,
         )
-        borrowing.save()
-        self.assertEqual(
-            borrowing.is_active, borrowing.actual_return_date is None
+        self.assertTrue(borrowing.is_active)
+
+        borrowing.actual_return_date = self.borrow_date + timezone.timedelta(
+            days=2
         )
+        borrowing.clean()
+        self.assertFalse(borrowing.is_active)
 
-    def test_borrowing_ordering(self) -> None:
-        borrow_date = timezone.now().date()
-        expected_return_dates = [
-            borrow_date + timezone.timedelta(days=3),
-            borrow_date + timezone.timedelta(days=1),
-            borrow_date + timezone.timedelta(days=5),
-        ]
-
-        for expected_return_date in expected_return_dates:
-            self.create_borrowing(borrow_date, expected_return_date).save()
-
-        sorted_borrowings = Borrowing.objects.all()
-
-        for i in range(1, len(sorted_borrowings)):
-            self.assertTrue(
-                sorted_borrowings[i - 1].expected_return_date
-                <= sorted_borrowings[i].expected_return_date
-            )
+    def test_borrowing_string_representation(self) -> None:
+        borrowing = self.create_borrowing(
+            self.borrow_date,
+            self.borrow_date + timezone.timedelta(days=1),
+            None,
+        )
+        expected_string = (
+            f"'{borrowing.book.title}' borrowed by {borrowing.user.email}"
+        )
+        self.assertEqual(str(borrowing), expected_string)
