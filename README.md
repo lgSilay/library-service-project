@@ -90,6 +90,7 @@ and navigating to http://localhost:8000.
 #### _Payments Service_
 - api/payments/payments/
 - api/payments/payments/<id>/
+- api/payments/payments/<id>/renew/
 - api/payments/payments/success/
 - api/payments/payments/cancel/
 
