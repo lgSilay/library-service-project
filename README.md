@@ -2,7 +2,7 @@
 ##### DRF Team Project
 The goal of this project is to implement an online management system for book borrowing. This system will streamline the library's administrative processes and greatly improve the user experience.
 
-## Features
+## 📍 Features
 
 ### **_Functional_** :
 
@@ -19,7 +19,7 @@ The goal of this project is to implement an online management system for book bo
 * ~30MB/year
 
 
-## Installation
+## ⚙️ Installation
 
 1. Python3 must be already installed.
 
@@ -48,20 +48,20 @@ The goal of this project is to implement an online management system for book bo
       - `user5@email.com`
 * Password for any of them: ***GGduIU@***
 
-## Run with Docker
+## 🐳 Run with Docker
 
 [Docker](https://www.docker.com/products/docker-desktop) should be installed.
 ```shell
 docker-compose up --build
 ```
 
-## Accessing the Application
+##  ✅ Accessing the Application
 
 You can now access the API by opening your web browser 
 and navigating to http://localhost:8000.
 
-## Available urls
-#### _Book Service_
+## 🧾 Available urls
+#### 📕 _Book Service_
 - api/books/books/
 - api/books/books/<id>/
 - api/books/books/<id>/upload-image/
@@ -73,7 +73,7 @@ and navigating to http://localhost:8000.
 - api/books/authors/<id>/subscribe
 - api/books/authors/?books-count=...&books-gt=...&books-lt=...&first-name=...&last-name=...&no-books&has-books
 
-#### _Users Service_
+#### 👤 _Users Service_
 - api/user/register/
 - api/user/token/
 - api/user/token/refresh/
@@ -81,22 +81,22 @@ and navigating to http://localhost:8000.
 - api/user/me/
 - api/user/telegram
 
-#### _Borrowings Service:_
+#### 🤝 _Borrowings Service:_
 - api/borrowing_service/borrowings/
 - api/borrowing_service/borrowings/?user_id=...&is_active=... 
 - api/borrowing_service/borrowings/<id>/
 - api/borrowing_service/borrowings/<id>/return
 
-#### _Payments Service_
+#### 💸 _Payments Service_
 - api/payments/payments/
 - api/payments/payments/<id>/
 - api/payments/payments/<id>/renew/
 - api/payments/payments/success/
 - api/payments/payments/cancel/
 
-#### _Documentations_
+#### 📃 _Documentations_
 - api/doc/swagger/
 - api/doc/redoc/
 
-## DB structure
+## 📋 DB structure
 ![DB structure](demo/schema.png)
