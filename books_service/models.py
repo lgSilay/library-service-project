@@ -101,6 +101,3 @@ class Book(models.Model):
 
     def __str__(self) -> str:
         return f"'{self.title}' written by {self.author}"
-
-
-from books_service import connectors
