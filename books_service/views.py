@@ -15,7 +15,10 @@ from books_service.serializers.common import (
     BookListSerializer,
     AuthorSerializer,
 )
-from books_service.serializers.nested import AuthorImageSerializer, BookImageSerializer
+from books_service.serializers.nested import (
+    AuthorImageSerializer,
+    BookImageSerializer
+)
 from library_project.permissions import IsAdminOrReadOnly
 
 

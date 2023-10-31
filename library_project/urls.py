@@ -16,13 +16,27 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
-    path("api/borrowing_service/", include("borrowing_service.urls", namespace="borrowing_service")),
+    path(
+        "api/borrowing_service/",
+        include("borrowing_service.urls", namespace="borrowing_service")
+    ),
     path("api/books/", include("books_service.urls")),
     path("api/user/", include("user.urls", namespace="user")),
-    path("api/payments/", include("payments_service.urls", namespace="payments")),
+    path(
+        "api/payments/",
+        include("payments_service.urls", namespace="payments")
+    ),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/doc/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    path("api/doc/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path(
+        "api/doc/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui"
+    ),
+    path(
+        "api/doc/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc"
+    ),
 )
 
 if settings.DEBUG:
