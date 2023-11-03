@@ -73,4 +73,5 @@ Pillow==10.1.0
 asynctest==0.13.0
 flake8==6.1.0
 django-templated-email==3.0.1
+psycopg2==2.9.9
 django-rosetta==0.9.9
