@@ -26,18 +26,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
     "rest_framework_simplejwt",
     "rest_framework",
     "django_celery_beat",
     "django_extensions",
     "debug_toolbar",
     "templated_email",
+    "drf_spectacular",
+    "rosetta",
+    
     "books_service.apps.BooksServiceConfig",
     "user",
     "borrowing_service",
-    "payments_service",
-    "drf_spectacular",
-    "rosetta",
+    "payments_service",    
 ]
 
 MIDDLEWARE = [
